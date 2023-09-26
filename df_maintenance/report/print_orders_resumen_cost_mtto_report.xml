@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+        <!--RCMTTO : Resumen del costo x equipo-->
+
+        <template id="RCMTTO_seccion_tabla_entidad">
+            <t>
+                <p class="text-right">
+                    Período: <t t-esc="date_start" t-options="{'widget':'date','format':'dd/MM/yyyy'}"/>
+                    al <t t-esc="date_end" t-options="{'widget':'date','format':'dd/MM/yyyy'}"/>
+                </p>
+                <br/>
+            </t>
+        </template>
+
+        <template id="RCMTTO_seccion_encabezado_de_columnas">
+            <tr>
+                <thead t-att-style="bg_main">
+                    <td t-att-style="std_header_center">CC</td>
+                    <td t-att-style="std_header_center">Presup</td>
+                    <td t-att-style="std_header_center">Real</td>
+                    <td t-att-style="std_header_center">Dif</td>
+                    <td t-att-style="std_header_center">Presup Acum.</td>
+                    <td t-att-style="std_header_center">Real Acum.</td>
+                    <td t-att-style="std_header_center">Dif Acum.</td>
+                </thead>
+            </tr>
+
+        </template>
+
+        <template id="RCMTTO_seccion_detalles">
+<!--                   <tr t-att-style="bg_deta">-->
+<!--                     <td t-att-style="detail_center" > <t t-esc="o.order_no"/> </td>-->
+<!--                     <td t-att-style="detail_center" > <t t-esc="o.asset_id.cost_center.code"/> </td>-->
+<!--                     <td t-att-style="detail_center" > <t t-esc="dicc_estado.get(o['state'],'?')"/> </td>-->
+<!--                     <td t-att-style="detail_right"> <t t-esc="user_func.number_by_cfg(od['product_amount'],zeros_right,show_zeros,2)"/></td>-->
+<!--                     <td t-att-style="detail_right"> <t t-esc="user_func.number_by_cfg(od['labor_amount'],zeros_right,show_zeros,2)"/></td>-->
+<!--                     <td t-att-style="detail_right"> <t t-esc="user_func.number_by_cfg(0.00,zeros_right,show_zeros,2)"/></td>-->
+<!--                     <td t-att-style="detail_right"> <t t-esc="user_func.number_by_cfg(od['product_amount']+o['labor_amount'],zeros_right,show_zeros,2)"/></td>-->
+<!--                  </tr>-->
+
+        </template>
+
+        <template id="RCMTTO_seccion_total_group">
+           <tr t-att-style="bg_deta">
+               <td  t-att-style="detail_left"> <t t-esc="current_cc_code"/> <t t-esc="name_cc"/></td>
+               <td  t-att-style="detail_right"> <t t-esc="user_func.number_by_cfg(total_col_plan,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="detail_right"> <t t-esc="user_func.number_by_cfg(total_col_real,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="detail_right"> <t t-esc="user_func.number_by_cfg(total_col_real-total_col_plan,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="detail_right"> <t t-esc="user_func.number_by_cfg(total_col_plan_acum,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="detail_right"> <t t-esc="user_func.number_by_cfg(total_col_real_acum,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="detail_right"> <t t-esc="user_func.number_by_cfg(total_col_real_acum-total_col_plan_acum,zeros_right,show_zeros,2)"/></td>
+           </tr>
+        </template>
+
+        <template id="RCMTTO_totales_resumen">
+           <t>
+             <tr t-att-style="bg_deta">
+               <td  t-att-style="style_total">Total general </td>
+               <td  t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(total_res_plan,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(total_res_real,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(total_res_real-total_res_plan,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(total_res_plan_acum,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(total_res_real_acum,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(total_res_real_acum-total_res_plan_acum,zeros_right,show_zeros,2)"/></td>
+            </tr>
+          </t>
+
+        </template>
+
+        <template id="RCMTTO_resumen_cost_normal">
+            <table  style="width:100%;border-spacing:0;cellspacing=0;">
+                <t t-call="df_maintenance.RCMTTO_seccion_encabezado_de_columnas"/>
+            <t t-foreach="get_centro_costo(domain_base)" t-as="cc">
+
+               <t t-set="current_cc_id" t-value="cc.id"/>
+               <t t-set="current_cc_code" t-value="cc.code"/>
+               <t t-set="name_cc" t-value="cc.name"/>
+
+               <t t-set="records_group" t-value="0"/>
+               <t t-set="total_col_plan" t-value="0"/>
+               <t t-set="total_col_real" t-value="0"/>
+               <t t-set="total_col_dif" t-value="0"/>
+               <t t-set="total_col_plan_acum" t-value="0"/>
+               <t t-set="total_col_real_acum" t-value="0"/>
+               <t t-set="total_col_dif_acum" t-value="0"/>
+
+               <tbody>
+                   <t t-foreach="get_ordenes_cc(domain_base,current_cc_id)" t-as="od">
+
+                             <t t-set="count_records" t-value="count_records + 1"/>
+                             <t t-set="records_group" t-value="records_group + 1"/>
+
+                             <t t-set="total_col_plan" t-value="total_col_plan + od.product_amount"/>
+                             <t t-set="total_col_real" t-value="total_col_real + od.product_amount + od.labor_amount"/>
+                             <t t-set="total_col_dif" t-value="total_col_real- total_col_plan"/>
+
+                             <t t-set="total_col_plan_acum" t-value="total_col_plan_acum + od['product_amount']"/>
+                             <t t-set="total_col_real_acum" t-value="total_col_real_acum + od['product_amount'] + od['labor_amount']"/>
+                             <t t-set="total_col_dif_acum" t-value="total_col_real_acum- total_col_plan_acum"/>
+
+                            <t t-set="total_res_plan" t-value="total_res_plan +  od['product_amount']"/>
+                             <t t-set="total_res_real" t-value="total_res_real + od['product_amount'] + od['labor_amount']"/>
+                             <t t-set="total_res_dif" t-value="total_res_dif -  total_res_plan"/>
+
+                             <t t-set="total_res_plan_acum" t-value="total_res_plan_acum +  od['product_amount']"/>
+                             <t t-set="total_res_real_acum" t-value="total_res_real_acum + od['product_amount'] + od['labor_amount']"/>
+                             <t t-set="total_res_dif_acum" t-value="total_res_real_acum -  total_res_plan_acum"/>
+                    </t>
+
+                 <t t-call="df_maintenance.RCMTTO_seccion_total_group"/>
+
+                 <t t-if="count_records==total_records">
+                     <t t-call="df_maintenance.RCMTTO_totales_resumen"/>
+                 </t>
+                 </tbody>
+
+            </t>
+            </table>
+         </template>
+
+        <template id="report_print_orders_resumen_cost_mtto">
+             <t t-call="web.basic_layout">
+            <!-- CUSTOM STYLE -->
+            <style>
+                    table.keep_with_colum> td {
+                        overflow: hidden;
+                        overflow-wrap:break-word;
+                    }
+           </style>
+           <t t-set="current_name_report" t-value="'df_maintenance.do_report_print_orders_resumen_cost_mtto'" />
+           <t t-call="nl_cfg_reports.load_configuracion_and_call_report" />
+            </t>
+       </template>
+
+        <template id="do_report_print_orders_resumen_cost_mtto">
+                <t t-set="report_main_title" t-value="'Costos Reales de Mantenimiento por equipos'" />
+                <div t-attf-class="#{'header' if repeat_header else 'o_boxed_header'}">
+                    <t t-call="nl_cfg_reports.custom_logo_and_title" />
+                </div>
+
+                <t t-call="df_maintenance.RCMTTO_seccion_tabla_entidad" />
+                <div class="page">
+                        <t t-set="total_records" t-value="len(docs)" />
+                        <t t-set="count_records" t-value="0"/>
+                        <t t-set="total_res_plan" t-value="0"/>
+                        <t t-set="total_res_real" t-value="0"/>
+                        <t t-set="total_res_dif" t-value="0"/>
+                        <t t-set="total_res_plan_acum" t-value="0"/>
+                        <t t-set="total_res_real_acum" t-value="0"/>
+                        <t t-set="total_res_dif_acum" t-value="0"/>
+                        
+                        <t t-set="style_total" t-value="detail_right + font_group_right"/>
+
+                        <t t-call="df_maintenance.RCMTTO_resumen_cost_normal" />
+
+                        <t t-call="df_maintenance.cfg_cambio_pagina" />
+                </div>
+                 <div class="footer" t-att-style="std_footer">
+                      <t t-call="df_maintenance.pie_de_pagina" />
+                 </div>
+        </template>
+
+
+    </data>
+
+</odoo>

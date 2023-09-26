@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="df_maintenance_post_work_force_wizard" model="ir.ui.view">
+            <field name="name">df.post.work.force.wizard</field>
+            <field name="model">df.post.work.force</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Post work force">
+                    <group>
+                        <field name="closing_date"/>
+                    </group>
+                    <footer>
+                        <button string="Aceptar" name="post_work_force" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                 </form>
+            </field>
+        </record>
+
+        <record id="df_action_post_work_force_wizard" model="ir.actions.act_window">
+            <field name="name">Post work force</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">df.post.work.force</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <data>
+
+        <template id="logo_and_title">
+            <t>
+              <table width="100%" border="0" cellspacing="0">
+                  <tr>
+                     <td> <img t-if="logo" t-att-src="image_data_uri(logo)" style="height:40; max-width:4cm; text-align: left;"></img></td>
+                     <td> <span t-att-style="font_header_center"> <t t-esc="report_main_title"/> </span></td>
+                  </tr>
+              </table>
+             </t>
+        </template>
+
+        <template id="tabla_entidad_unidad_and_fechas">
+            <t>
+                <div>
+                    <table style="width:100%">
+                        <tr class="entidad">
+                            <td>Entidad:</td>
+                            <td colspan="5">
+                                <t t-esc="entidad"></t>
+                            </td>
+                        </tr>
+                        <tr class="entidad">
+                            <td style="width:10%">UB:</td>
+                            <td style="width:50%">
+                                <t t-esc="name_unidad"></t>
+                            </td>
+                            <td align="center" style="width:10%">Desde:</td>
+                            <td align="left" style="width:10%">
+                                <t t-esc="fecha_ini"></t>
+                            </td>
+                            <td align="center" style="width:10%">Hasta:</td>
+                            <td align="left" style="width:10%">
+                                <t t-esc="fecha_fin"></t>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </t>
+
+        </template>
+
+
+        <template id="cfg_cambio_pagina">
+            <t>
+                <t t-if="page_break_before == 'auto'"><p style="page-break-before:auto;"></p></t>
+                <t t-if="page_break_before == 'always'"><p style="page-break-before:always;"></p></t>
+            </t>
+        </template>
+
+        <template id="seccion_jefes">
+           <t>
+
+             <table width="100%" border="0" >
+                    <tr>
+                        <td style="border: 0px solid black; font-size: 13px; text-align: center; border-bottom:0px" width = "25%" >Elaborado por: </td>
+                        <td style="border: 0px solid black; font-size: 13px; text-align: center; border-bottom:0px" width = "25%" >Revisado por: </td>
+                        <td style="border: 0px solid black; font-size: 13px; text-align: center; border-bottom:0px" width = "25%"> Recibido por: </td>
+                        <td style="border: 0px solid black; font-size: 13px; text-align: center; border-bottom:0px" width = "25%" >Recibido por: </td>
+                    </tr>
+             </table>
+             <table width="100%" border="0" >
+                    <tr>
+                        <td style="border: 0px solid black; font-size: 13px; text-align: center; border-top:0px" width = "25%" > </td>
+                        <td style="border: 0px solid black; font-size: 13px; text-align: center; border-top:0px" width = "25%" >Director UEB  </td>
+                        <td style="border: 0px solid black; font-size: 13px; text-align: center; border-top:0px" width = "25%"> Dirección Producción</td>
+                        <td style="border: 0px solid black; font-size: 13px; text-align: center; border-top:0px" width = "25%" >Dirección Economía </td>
+                    </tr>
+             </table>
+
+            <table width="100%" border="0" >
+                    <tr>
+                    <td  style="border: 0px solid black; font-size: 13px;text-align: center " width = "25%">
+                            Nombres, Firma
+                    </td>
+                    <td  style="border: 0px solid black; font-size: 13px;text-align: center " width = "25%">
+                            Nombres, Firma
+                    </td>
+                    <td  style="border: 0px solid black; font-size: 13px;text-align: center " width = "25%">
+                            Nombres, Firma
+                    </td>
+                    <td style="border: 0px solid black;font-size: 13px;text-align: center "  width = "25%">
+                            Nombres, Firma
+                    </td>
+
+                    </tr>
+                </table>
+
+                <table width="100%" border="0"  >
+                    <tr>
+                        <td style="border: 0px solid black;font-size: 13px;text-align: center" width = "25%">
+                             <t t-esc="usuario_imprime"/>
+                        </td>
+                        <td style="border: 0px solid black;font-size: 13px; " width = "25%"> </td>
+                        <td style="border: 0px solid black;font-size: 13px; "  width = "25%"> </td>
+                        <td style="border: 0px solid black;font-size: 13px; " width = "25%" > </td>
+
+                    </tr>
+                </table>
+
+
+          </t>
+        </template>
+
+        <template id="pie_de_pagina">
+            <t>
+                <t t-set="fecha_real_print" t-value="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')" />
+                <hr/>
+                Impreso el <t t-esc="fecha_real_print" /> por <t t-esc="request.env.user.name" />  Página: <span class="page" /> de <span class="topage" />
+            </t>
+        </template>
+
+        <template id="MESSAGE_data_empty">
+            <t>
+                <div style="color:brown">
+                     <br/><br/>
+                     <h5>No hay datos que mostrar con los parámetros actuales.</h5>
+                </div>
+            </t>
+
+        </template>
+
+    </data>
+
+</odoo>
+
+
+

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="df_action_maintenance_work_order_to_plant" model="ir.actions.act_window">
+        <field name="name">Work Order To Plants</field>
+        <field name="res_model">df.maintenance.work.order</field>
+<!--        <field name="binding_model_id" ref="maintenance.model_maintenance_equipment"/>-->
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('order_plant', '=', True)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add a new maintenance request
+            </p><p>
+                Follow the process of the request and communicate with the collaborator.
+            </p>
+        </field>
+        </record>
+    </data>
+</odoo>

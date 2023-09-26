@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="df_maintenance_rpt_request_wizard_view" model="ir.ui.view">
+            <field name="name">df.maintenance.rpt.request.wizard</field>
+            <field name="model">df.maintenance.rpt.request.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Request">
+                        <group col="2" colspan="2">
+                            <field name="qweb_output" colspan="2"/>
+                        </group>
+                            <group col="4" colspan="4">
+                              <separator string="Range Date" colspan="4"/>
+                              <field name="date_start" colspan="2"/>
+                              <field name="date_end" colspan="2"/>
+                            </group>
+                            <group col="2" colspan="2">
+                                <field name="stage_id" colspan="2"/>
+                            </group>
+                            <group col="2" colspan="2">
+                                <field name="cost_center_allowed" colspan="2"/>
+                                <field name="stock_asset_id" colspan="2"/>
+                                <field name="equipment_id" colspan="2"/>
+                            </group>
+
+                    <footer>
+                        <button string="Print" name="print_report" type="object" class="oe_highlight"/>
+                        <button special="cancel" string="Cancel" class="btn-default"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="df_maintenance_report_request_action" model="ir.actions.act_window">
+            <field name="name">Request</field>
+            <field name="res_model">df.maintenance.rpt.request.wizard</field>
+
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="df_maintenance_rpt_request_wizard_view"/>
+            <field name="context">{'CODE_RPT': 'MTTO'}</field>
+            <field name="target">new</field>
+        </record>
+
+
+    </data>
+</odoo>

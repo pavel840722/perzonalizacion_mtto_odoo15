@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_df_maintenance_activity_search" model="ir.ui.view">
+            <field name="name">df.maintenance.activity.search</field>
+            <field name="model">df.maintenance.activity</field>
+            <field name="arch" type="xml">
+                <search >
+                    <group expand="0" string="Group By">
+                        <filter string="Brigade" name="brigade"  context="{'group_by': 'brigade_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="view_df_maintenance_activity_tree" model="ir.ui.view">
+            <field name="name">df.maintenance.activity.tree</field>
+            <field name="model">df.maintenance.activity</field>
+            <field eval="100" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Maintenance Activity">
+                    <field name="name"/>
+                    <field name="brigade_id" force_save="1" />
+                </tree>
+            </field>
+        </record>
+        <record id="df_maintenance_failure_cause_form_view" model="ir.ui.view">
+            <field name="name">df.maintenance.activity.form</field>
+            <field name="model">df.maintenance.activity</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Maintenance Activity" duplicate="false">
+                    <group>
+                        <field name="name" />
+                        <field name="brigade_id"/>
+                        <field name="department_id" invisible="1"/>
+
+                    </group>
+                    <notebook>
+                        <page string="Products" name="products">
+                            <field name="product_ids" nolabel="1">
+                                <tree string="Products" editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="quantity"/>
+                                    <field name="uom_id"/>
+                                    <field name="price_unit"/>
+                                    <field name="amount" sum="Total" options="{'save_readonly': 1}"/>
+                                    <field name="is_activity" invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Jobs" name="jobs"  attrs="{'invisible': [('brigade_id', '=', False)]}" >
+                            <field name="job_ids" nolabel="1">
+                                <tree string="Employees" editable="bottom">
+                                    <field name="cant_job"/>
+                                    <field name="activity_ids" invisible="1"/>
+                                    <field name="job_id"/>
+                                    <field name="department_id" invisible="1"/>
+                                    <field name="time" widget="float_time"/>
+                                    <field name="amount" sum="Total"/>
+                                    <field name="is_activity" invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        <record id="df_action_maintenance_activity" model="ir.actions.act_window">
+            <field name="name">Maintenance Activity</field>
+            <field name="res_model">df.maintenance.activity</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_df_maintenance_activity_tree"/>
+        </record>
+    </data>
+</odoo>

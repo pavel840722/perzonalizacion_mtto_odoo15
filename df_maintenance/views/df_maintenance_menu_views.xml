@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Sobreescribiendo actions maintenance_areas_action_settings -->
+    <delete model="ir.actions.act_window" id="maintenance.maintenance_team_action_settings"/>
+
+    <record id="maintenance_areas_action_settings" model="ir.actions.act_window">
+        <field name="name">Maintenance Areas</field>
+        <field name="res_model">maintenance.team</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="maintenance.maintenance_team_view_search"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('maintenance.maintenance_team_view_tree')})]"/>
+        <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Add a area in the maintenance request
+          </p>
+        </field>
+    </record>
+    <!-- ######################################################################################################################################################################### -->
+
+    <!--Menus del modulo maintenance de Odoo-->
+    <delete model="ir.ui.menu" id="maintenance.menu_maintenance_teams"/>
+    <delete model="ir.ui.menu" id="maintenance.menu_equipment_form"/>
+    <delete model="ir.ui.menu" id="maintenance.menu_maintenance_configuration"/>
+    <delete model="ir.ui.menu" id="maintenance.menu_m_dashboard"/>
+    <delete model="ir.ui.menu" id="maintenance.menu_m_request_calendar"/>
+    <delete model="ir.ui.menu" id="maintenance.maintenance_request_reporting"/>
+    <menuitem id="menu_maintenance_configuration" name="Configuration" parent="maintenance.menu_maintenance_title" groups="group_maintenance_administrator" sequence="100"/>
+    <menuitem id="menu_equipment_form" name="Equipments" parent="maintenance.menu_maintenance_title" action="maintenance.hr_equipment_action" groups="group_maintenance_administrator" sequence="2"/>
+<!--    <menuitem id="menu_m_dashboard" name="Dashboard" parent="maintenance.menu_maintenance_title" groups="group_maintenance_administrator" action="maintenance.maintenance_dashboard_action" sequence="0"/>-->
+    <menuitem id="menu_m_request_calendar" name="Maintenance Calendar" parent="maintenance.menu_m_request" action="maintenance.hr_equipment_request_action_cal" groups="group_maintenance_administrator" sequence="2"/>
+
+
+     <!--Requests-->
+    <menuitem id="menu_maintenance_request" name="Maintenance requests" parent="maintenance.menu_maintenance_title" sequence="2" groups="group_maintenance_administrator,group_maintenance_petitioner"/>
+
+    <menuitem id="menu_maintenance_request_plantas" name="Maintenance requests to Plants" parent="menu_maintenance_request" sequence="2" action="maintenance_request_to_plant" groups="group_maintenance_administrator,group_maintenance_petitioner"/>
+
+    <menuitem id="menu_m_request_form" name="Immediate/Permanent maintenances" parent="menu_maintenance_request" action="maintenance_request_action" groups="group_maintenance_administrator,group_maintenance_petitioner" sequence="1"/>
+
+
+    <!--Orders-->
+    <menuitem id="menu_maintenance_work_order" name="Work orders" parent="maintenance.menu_maintenance_title" sequence="3" groups="group_maintenance_administrator,group_maintenance_executor,group_maintenance_petitioner"/>
+        <menuitem id="menu_work_order" name="Generated orders" parent="menu_maintenance_work_order" action="df_action_maintenance_work_order" sequence="2" groups="group_maintenance_administrator,group_maintenance_executor,group_maintenance_petitioner"/>
+        <menuitem id="menu_work_order_to_plant" name="Work Order to plant" parent="menu_maintenance_work_order" action="df_action_maintenance_work_order_to_plant" sequence="3" groups="group_maintenance_administrator,group_maintenance_petitioner"/>
+
+    <!--Operations-->
+    <menuitem id="menu_operations" name="Operations" parent="maintenance.menu_maintenance_title" sequence="4" groups="group_maintenance_administrator"/>
+        <menuitem id="menu_long_time_on_draft" name="File orders" parent="menu_operations" action="df_action_file_draf_orders" sequence="1" groups="group_maintenance_administrator"/>
+        <menuitem id="menu_maintenance_transfer_between_orders_view_item" name="Transfer Between Orders" parent="menu_operations" action="df_action_transfer_between_orders_wizard" sequence="2" groups="group_maintenance_administrator"/>
+        <menuitem id="menu_post_work_force" name="Post orders" parent="menu_operations" action="df_action_post_work_force_wizard" sequence="3" groups="group_maintenance_administrator"/>
+
+
+    <!--Generales-->
+    <menuitem id="menu_generals" name="Generals Settings" parent="menu_maintenance_configuration" sequence="5" groups="group_maintenance_administrator"/>
+        <menuitem id="menu_maintenance_remove_settings" name="Remove Settings" parent="menu_generals" action="df_action_maintenance_remove_settings" groups="group_maintenance_administrator" sequence="1"/>
+            <menuitem id="menu_maintenance_physical_location" name="Physical Location" parent="menu_generals" action="df_action_maintenance_physical_location" groups="group_maintenance_administrator" sequence="2"/>
+        <menuitem id="menu_maintenance_subcategory" name="Subcategory" parent="menu_generals" action="df_action_maintenance_equipment_subcategory" groups="group_maintenance_administrator" sequence="3"/>
+        <menuitem id="maintenance.menu_maintenance_cat" name="Equipment Categories" parent="menu_generals" action="maintenance.hr_equipment_category_action" groups="group_maintenance_administrator" sequence="4"/>
+        <menuitem id="menu_maintenance_brigada" name="Maintenance Brigades" parent="menu_generals" action="df_action_maintenance_brigade" groups="group_maintenance_administrator" sequence="5"/>
+        <menuitem id="menu_rate" name="Maintenance Rate" parent="menu_generals" action="df_action_maintenance_rate" sequence="6" groups="group_maintenance_administrator"/>
+        <menuitem id="menu_activity" name="Maintenance Activities" parent="menu_generals" action="df_action_maintenance_activity" sequence="7" groups="group_maintenance_administrator"/>
+        <menuitem id="menu_maintenance_areas" name="Maintenance Areas" parent="menu_generals" action="maintenance_areas_action_settings" groups="group_maintenance_administrator" sequence="8"/>
+        <menuitem id="menu_department_centro" name="Department-Cost Center" parent="menu_generals" action="df_action_maintenance_department_centro" groups="group_maintenance_administrator" sequence="9"/>
+        <menuitem id="menu_maintenance_accounts" name="Post workforce" parent="menu_generals" action="df_maintenance_accounts_action" groups="group_maintenance_administrator" sequence="10"/>
+
+    <!--Corrective-->
+    <menuitem id="menu_corrective" name="Corrective Maintenance" parent="menu_maintenance_configuration" sequence="6" groups="group_maintenance_administrator"/>
+        <menuitem id="menu_failure_causes" name="Failure Causes" parent="menu_corrective" action="df_action_maintenance_failure_cause" sequence="2" groups="group_maintenance_administrator"/>
+
+   <!--    <menuitem id="menu_maintenance_initialize_programming_item" name="Initialize Schedules" parent="maintenance.menu_m_request" action="df_action_maintenance_initialize_schedule_form" sequence="4" groups="group_maintenance_administrator"/>-->
+
+
+    <!--Preventive-->
+<!--    <menuitem id="menu_preventive_maintenance" name="Preventive Maintenance" parent="menu_maintenance_configuration" sequence="5" groups="group_maintenance_administrator"/>-->
+<!--        <menuitem id="menu_plan_type" name="Maintenance Plan Types" parent="menu_preventive_maintenance" action="df_action_maintenance_plan_type_tree" sequence="1"/>-->
+<!--        <menuitem id="menu_interventions" name="Interventions" parent="menu_preventive_maintenance" action="df_action_preventive_intervention" sequence="2"/>-->
+<!--        <menuitem id="menu_template" name="Maintenance Templates" parent="menu_preventive_maintenance" action="df_action_maintenance_template" sequence="3"/>-->
+
+<!--Reports-->
+    <menuitem id="menu_reports1" name="Reports" parent="maintenance.menu_maintenance_title" sequence="9" groups="group_maintenance_administrator"/>
+
+    <menuitem id="menu_maintenance_rpt_request" name="Request"
+                  parent="menu_reports1"
+              action="df_maintenance_report_request_action"
+                  groups="group_maintenance_administrator"
+              sequence="1" />
+
+    <menuitem id="menu_maintenance_inf_orders" name="Orders"
+                  parent="menu_reports1"
+                  groups="group_maintenance_administrator"
+              sequence="2"  />
+
+    <menuitem id="menu_maintenance_rpt_orders" name="Orders List"
+                  parent="menu_maintenance_inf_orders"
+              action="df_maintenance_report_orders_action"
+                  groups="group_maintenance_administrator"
+              sequence="1"  />
+
+    <menuitem id="menu_maintenance_rpt_real_cost_equipos" name="Real Cost of Maintenance Equipment"
+              parent="menu_maintenance_inf_orders"
+              action="df_maintenance_report_orders_resumen_cost_action"
+                  groups="group_maintenance_administrator"
+              sequence="2"  />
+
+    <menuitem id="menu_maintenance_rpt_real_cost_cc" name="Real Cost of Maintenance Cost Center"
+              parent="menu_maintenance_inf_orders"
+              action="df_maintenance_report_orders_resumen_cost_mtto_action"
+                  groups="group_maintenance_administrator"
+              sequence="3"  />
+
+    <menuitem id="menu_maintenance_rpt_maintenance_time" name="Maintenance Time"
+                  parent="menu_maintenance_inf_orders"
+              action="df_maintenance_report_maintenance_time_action"
+                  groups="group_maintenance_administrator"
+              sequence="4"  />
+
+    <menuitem id="menu_maintenance_rpt_time_brigada" name="Maintenance Time for brigade"
+                  parent="menu_maintenance_inf_orders"
+              action="df_maintenance_report_maintenance_time_brigade_action"
+                  groups="group_maintenance_administrator"
+              sequence="4" />
+
+
+</odoo>

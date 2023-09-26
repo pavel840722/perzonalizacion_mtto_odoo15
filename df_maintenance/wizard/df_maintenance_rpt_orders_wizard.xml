@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="df_maintenance_rpt_orders_wizard_view" model="ir.ui.view">
+            <field name="name">df.maintenance.rpt.orders.wizard</field>
+            <field name="model">df.maintenance.rpt.orders.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Orders">
+                        <group col="2" colspan="2">
+                            <field name="qweb_output" colspan="2"/>
+                        </group>
+                            <group col="4" colspan="4">
+                              <separator string="Range Date" colspan="4"/>
+                              <field name="date_start" colspan="2"/>
+                              <field name="date_end" colspan="2"/>
+                            </group>
+                            <group col="2" colspan="2">
+                                <field name="state" colspan="2"
+                                       invisible="context.get('rpt','brigada')=='brigada'"/>
+                            </group>
+                            <group col="2" colspan="2">
+                                <field name="maintenance_team_id" colspan="2"/>
+                                <field name="brigade_id" colspan="2"
+                                    domain = "[('team_id','=', maintenance_team_id)]"
+                                />
+<!--                                <field name="brigade_cost_center" colspan="2"-->
+<!--                                       attrs="{'invisible': [('brigade_id', '!=', False)]}"-->
+<!--                                />-->
+
+                            </group>
+
+                    <footer>
+                        <button string="Print" name="print_report" type="object" class="oe_highlight"/>
+                        <button special="cancel" string="Cancel" class="btn-default"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="df_maintenance_report_orders_action" model="ir.actions.act_window">
+            <field name="name">Orders</field>
+            <field name="res_model">df.maintenance.rpt.orders.wizard</field>
+
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="df_maintenance_rpt_orders_wizard_view"/>
+
+            <field name="context">{'CODE_RPT': 'MTTO','rpt':'orden'}</field>
+            <field name="target">new</field>
+        </record>
+
+         <record id="df_maintenance_report_maintenance_time_brigade_action" model="ir.actions.act_window">
+            <field name="name">Maintenance Time for brigade</field>
+            <field name="res_model">df.maintenance.rpt.orders.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="df_maintenance_rpt_orders_wizard_view"/>
+            <field name="context">{'CODE_RPT': 'MTTO','rpt':'brigada'}</field>
+            <field name="target">new</field>
+        </record>
+
+
+
+    </data>
+</odoo>

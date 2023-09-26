@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="df_maintenance_work_order_cancel_form_view" model="ir.ui.view">
+        <field name="name">df.maintenance.work.order.cancel.form</field>
+        <field name="model">df.maintenance.work.order.cancel</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="work_order_id" invisible="1"/>
+                <group>
+                    <field name="cancellation_reasons"></field>
+                    <field name="date_cancellation"></field>
+                </group>
+                <footer>
+                    <button name="action_cancel_wizard" string="Aceptar" type="object" class="btn-primary"
+                        data-hotkey="q"/>
+                    <button special="cancel" data-hotkey="z" string = "Cancelar" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

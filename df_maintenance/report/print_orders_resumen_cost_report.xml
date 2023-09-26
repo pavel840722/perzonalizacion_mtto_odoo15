@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+        <!--RC : Resumen del costo x equipo-->
+
+        <template id="RC_seccion_tabla_entidad">
+            <t>
+                <p class="text-right">
+                    Período: <t t-esc="date_start" t-options="{'widget':'date','format':'dd/MM/yyyy'}"/>
+                    al <t t-esc="date_end" t-options="{'widget':'date','format':'dd/MM/yyyy'}"/>
+                </p>
+
+                <br/>
+            </t>
+        </template>
+
+        <template id="RC_seccion_encabezado_de_columnas">
+
+            <thead t-att-style="font_group">
+           <tr >
+
+               <td t-att-colspan="3" t-att-style="font_group_left"> <t t-esc="current_cc_code"/>   <t t-esc="name_cc"/></td>
+
+           </tr>
+        </thead>
+
+            <t>
+                <thead t-att-style="bg_main">
+
+                    <td width="15%" t-att-style="std_header_center">No.Orden</td>
+                    <td width="15%" t-att-style="std_header_center">CC</td>
+                    <td width="15%" t-att-style="std_header_center">Estado</td>
+                    <td width="10%" t-att-style="std_header_center">Costo de Material</td>
+                    <td width="10%" t-att-style="std_header_center">Costo de Mano de obra</td>
+                    <td width="10%" t-att-style="std_header_center">Gastos x compra directa</td>
+                    <td width="10%" t-att-style="std_header_center">Total</td>
+                    <td width="15%" t-att-style="std_header_center">Equipo</td>
+
+                </thead>
+            </t>
+
+        </template>
+
+        <template id="RC_seccion_detalles">
+                   <tr t-att-style="bg_deta">
+                     <td t-att-style="detail_center" > <t t-esc="o.order_no"/> </td>
+                     <td t-att-style="detail_center" > <t t-esc="o.asset_id.cost_center.code"/> </td>
+                     <td t-att-style="detail_center" > <t t-esc="dicc_estado.get(o['state'],'?')"/> </td>
+                     <td t-att-style="detail_right"> <t t-esc="user_func.number_by_cfg(o['product_amount'],zeros_right,show_zeros,2)"/></td>
+                     <td t-att-style="detail_right"> <t t-esc="user_func.number_by_cfg(o['labor_amount'],zeros_right,show_zeros,2)"/></td>
+                     <td t-att-style="detail_right"> <t t-esc="user_func.number_by_cfg(0.00,zeros_right,show_zeros,2)"/></td>
+                     <td t-att-style="detail_right"> <t t-esc="user_func.number_by_cfg(o['product_amount']+o['labor_amount'],zeros_right,show_zeros,2)"/></td>
+
+                     <td t-att-style="detail_center" > <t t-esc="o.asset_id.code"/> </td>
+                  </tr>
+
+        </template>
+
+        <template id="RC_seccion_total_group">
+           <tr>
+              <td colspan="8" t-att-style="table_border_no + 'height:10px;'"/>
+         </tr>
+           <tr t-att-style="bg_deta">
+               <td colspan="2" t-att-style="style_total">Total del Centro de costo :  <t t-esc="current_cc_code"/>   <t t-esc="name_cc"/> </td>
+               <td  t-att-style="style_total_center"> <t t-esc="user_func.number_by_cfg(records_group,zeros_right,show_zeros,0)"/></td>
+               <td  t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(total_col_GM,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(total_col_MO,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(total_col_GT,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(total_col_TT,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="style_total"> </td>
+           </tr>
+        </template>
+
+        <template id="RC_totales_resumen">
+           <tr>
+              <td colspan="8" t-att-style="table_border_no + 'height:10px;'"/>
+         </tr>
+           <t>
+              <tr>
+                <tr t-att-style="bg_deta">
+               <td  colspan="2" t-att-style="style_total">Total general </td>
+               <td  t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(records_group,zeros_right,show_zeros,0)"/></td>
+               <td  t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(total_res_GM,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(total_res_MO,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(total_res_GT,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(total_res_TT,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="style_total"> </td>
+              </tr>
+
+              </tr>
+          </t>
+
+        </template>
+
+        <template id="resumen_cost_normal">
+           <t t-set="total_col_GM" t-value="0"/>
+           <t t-set="total_col_MO" t-value="0"/>
+           <t t-set="total_col_GT" t-value="0"/>
+           <t t-set="total_col_TT" t-value="0"/>
+           <t t-foreach="get_centro_costo(domain_base)" t-as="current_record">
+
+               <t t-set="current_cc_code" t-value="current_record.code"/>
+               <t t-set="name_cc" t-value="current_record.name"/>
+
+               <t t-set="records_group" t-value="0"/>
+
+                <t t-set="total_res_GM" t-value="0"/>
+                 <t t-set="total_res_MO" t-value="0.00"/>
+                 <t t-set="total_res_GT" t-value="0.00"/>
+                 <t t-set="total_res_TT" t-value="0.00"/>
+                <table style="width:100%;border-spacing:0;cellspacing=0;">
+
+                <t t-call="df_maintenance.RC_seccion_encabezado_de_columnas"/>
+
+                <t t-foreach="get_equipos_res(domain_base,current_record.id)" t-as="o">
+                     <tbody>
+                             <t t-set="count_records" t-value="count_records + 1"/>
+                             <t t-set="records_group" t-value="records_group + 1"/>
+                             <t t-set="total_col_GM" t-value="total_col_GM + o['product_amount']"/>
+                             <t t-set="total_col_MO" t-value="total_col_MO + o['labor_amount']"/>
+                             <t t-set="total_col_GT" t-value="total_col_GT + 0.00"/>
+                             <t t-set="total_col_TT"
+                             t-value="total_col_TT + o['product_amount'] + o['labor_amount']"/>
+
+                             <t t-set="total_res_GM" t-value="total_res_GM +  o['product_amount']"/>
+                             <t t-set="total_res_MO" t-value="total_res_MO + o['labor_amount']"/>
+                             <t t-set="total_res_GT" t-value="total_res_GT + 0.00"/>
+                             <t t-set="total_res_TT"
+                                t-value="total_res_TT + o['product_amount'] +o['labor_amount']"/>
+                             <t t-call="df_maintenance.RC_seccion_detalles"/>
+                     </tbody>
+                </t>
+
+                 <t t-call="df_maintenance.RC_seccion_total_group"/>
+                 <t t-if="count_records==total_records">
+                     <t t-call="df_maintenance.RC_totales_resumen"/>
+                 </t>
+        </table>
+
+
+          </t>
+
+     </template>
+
+        <template id="RC_Detallado">
+
+            <t t-foreach="docs" t-as="o" t-if="current_cc == o.asset_id.cost_center.id">
+
+                <t t-set="count_records" t-value="count_records + 1" />
+                <t t-set="records_group" t-value="records_group + 1" />
+                <t t-set="total_col_GM" t-value="total_col_GM + o['product_amount']" />
+                <t t-set="total_col_MO" t-value="total_col_MO + o['labor_amount']" />
+                <t t-set="total_col_GT" t-value="total_col_GT + 0.00" />
+                <t t-set="total_col_TT" t-value="total_col_TT + o['product_amount'] + o['labor_amount']" />
+
+                <t t-set="total_res_GM" t-value="total_res_GM +  o['product_amount']" />
+                <t t-set="total_res_MO" t-value="total_res_MO + o['labor_amount']" />
+                <t t-set="total_res_GT" t-value="total_res_GT + 0.00" />
+                <t t-set="total_res_TT" t-value="total_res_TT + o['product_amount'] +o['labor_amount']" />
+                <t t-call="df_maintenance.RC_seccion_detalles" />
+
+            </t>
+
+    </template>
+
+        <template id="RC_seccion_header_cc_detallado">
+            <tr >
+            </tr>
+            <tr >
+            </tr>
+            <tr >
+              <td t-att-colspan="1" t-att-style="font_group_left">  Centro de costo:<t t-esc="current_cc_code"/>   <t t-esc="name_cc"/></td>
+            </tr>
+
+        </template>
+
+        <template id="RC_seccion_header_equipos">
+
+                  <tr>
+                    <td t-att-style="font_group_left">Equipo:<t t-esc="e.code"/> </td>
+                    <td t-att-style="font_group_left"><t t-esc="e.name"/> </td>
+                  </tr>
+                  <tr >
+                    <td t-att-style="std_header_center">Item</td>
+                    <td t-att-style="std_header_center">Descripción</td>
+                    <td t-att-style="std_header_center">Fecha</td>
+                    <td t-att-style="std_header_center">Tecnico</td>
+                    <td t-att-style="std_header_center">Material</td>
+                    <td t-att-style="std_header_center">Mano de Obra</td>
+                    <td t-att-style="std_header_center">Gastos x compra directa</td>
+                    <td t-att-style="std_header_center">Total</td>
+                  </tr>
+        </template>
+
+        <template id="RC_seccion_header_orden">
+
+            <tr>
+                <td t-att-colspan="2" t-att-style="font_group_left">SO:<t t-esc="od.order_no"/></td>
+            </tr>
+            <t t-set="total_orden_gm" t-value="0"/>
+            <t t-set="total_orden_mo" t-value="0"/>
+            <t t-set="total_orden_to" t-value="0"/>
+
+            <t t-foreach="od.product_ids" t-as="item"  >
+                  <t t-set="code" t-value="item.product_id.product_tmpl_id.responsible_id.employee_id.code"/>
+
+                      <t t-set="total_orden_gm" t-value="total_orden_gm + item.amount"/>
+                      <tr>
+                          <td t-att-style="detail_center"><t t-esc="item.product_id.product_tmpl_id.default_code"/></td>
+                          <td t-att-style="detail_left"><t t-esc="item.product_id.product_tmpl_id.name"/></td>
+                          <td t-att-style="detail_center"><t t-esc="item.date" t-options="{'widget':'date','format':'dd/MM/yyyy'}"/></td>
+                          <td t-att-style="detail_left"><t t-esc="item.product_id.product_tmpl_id.responsible_id.employee_id.code"/></td>
+                          <td t-att-style="detail_right"><t t-esc="user_func.number_by_cfg(item.amount,zeros_right,show_zeros,2)"/></td>
+                          <td t-att-style="detail_right"><t t-esc="user_func.number_by_cfg(0,zeros_right,show_zeros,2)"/></td>
+                          <td t-att-style="detail_right"><t t-esc="user_func.number_by_cfg(0,zeros_right,show_zeros,2)"/></td>
+                          <td t-att-style="detail_right"><t t-esc="user_func.number_by_cfg(item.amount,zeros_right,show_zeros,2)"/></td>
+                      </tr>
+
+              </t>
+
+            <t t-foreach="od.employee_ids" t-as="item">
+                   <t t-set="total_orden_mo" t-value="total_orden_mo + item.amount"/>
+                  <tr>
+                      <td t-att-style="detail_center"><t t-esc="item.job_id.code"/></td>
+                      <td t-att-style="detail_left"><t t-esc="item.job_id.name"/></td>
+                      <td t-att-style="detail_center"><t t-esc="item.date" t-options="{'widget':'date','format':'dd/MM/yyyy'}"/></td>
+                      <td t-att-style="detail_center"><t t-esc="item.employee_id.code"/></td>
+                      <td t-att-style="detail_right"><t t-esc="user_func.number_by_cfg(0,zeros_right,show_zeros,2)"/></td>
+                      <td t-att-style="detail_right"><t t-esc="user_func.number_by_cfg(item.amount,zeros_right,show_zeros,2)"/></td>
+                      <td t-att-style="detail_right"><t t-esc="user_func.number_by_cfg(0,zeros_right,show_zeros,2)"/></td>
+                      <td t-att-style="detail_right"><t t-esc="user_func.number_by_cfg(item.amount,zeros_right,show_zeros,2)"/></td>
+                  </tr>
+
+              </t>
+
+                 <tr>
+                      <td colspan="4" t-att-style="style_total">Total Orden</td>
+                      <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(total_orden_gm,zeros_right,show_zeros,2)"/></td>
+                      <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(total_orden_mo,zeros_right,show_zeros,2)"/></td>
+                      <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(0,zeros_right,show_zeros,2)"/></td>
+                      <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(total_orden_gm + total_orden_mo,zeros_right,show_zeros,2)"/></td>
+
+                  </tr>
+
+        </template>
+
+        <template id="RC_seccion_footer_detallado">
+
+                <tr>
+                      <td colspan="4" t-att-style="style_total">Total General</td>
+                      <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(total_res_GM,zeros_right,show_zeros,2)"/></td>
+                      <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(total_res_MO,zeros_right,show_zeros,2)"/></td>
+                      <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(total_res_GT,zeros_right,show_zeros,2)"/></td>
+                      <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(total_res_GM + total_res_MO + total_res_GT ,zeros_right,show_zeros,2)"/></td>
+                </tr>
+
+            </template>
+
+        <template id="RC_seccion_footer_cc_detallado">
+                <tr>
+                  <td colspan="4" t-att-style="style_total">Total Centro de Costo</td>
+                  <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(total_cc_GM,zeros_right,show_zeros,2)"/></td>
+                  <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(total_cc_MO,zeros_right,show_zeros,2)"/></td>
+                  <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(total_cc_GT,zeros_right,show_zeros,2)"/></td>
+                  <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(total_cc_GM + total_cc_MO + total_cc_GT ,zeros_right,show_zeros,2)"/></td>
+
+                </tr>
+            </template>
+
+        <template id="RC_seccion_footer_eq_detallado">
+
+                <tr>
+                      <td colspan="4" t-att-style="style_total">Total Equipo</td>
+                      <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(total_eq_GM,zeros_right,show_zeros,2)"/></td>
+                      <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(total_eq_MO,zeros_right,show_zeros,2)"/></td>
+                      <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(total_eq_GT,zeros_right,show_zeros,2)"/></td>
+                      <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(total_eq_GM + total_eq_MO + total_eq_GT ,zeros_right,show_zeros,2)"/></td>
+                </tr>
+
+            </template>
+
+        <template id="RC_totales_detallado">
+           <tr>
+              <td colspan="7" t-att-style="table_border_no + 'height:10px;'"/>
+           </tr>
+           <t>
+              <tr>
+               <tr t-att-style="bg_deta">
+               <td  colspan="4" t-att-style="style_total">Total general </td>
+               <td  t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(total_res_GM,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(total_res_MO,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(total_res_GT,zeros_right,show_zeros,2)"/></td>
+               <td  t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(total_res_TT,zeros_right,show_zeros,2)"/></td>
+
+              </tr>
+
+              </tr>
+          </t>
+
+        </template>
+
+        <template id="report_print_orders_resumen_cost">
+             <t t-call="web.basic_layout">
+            <!-- CUSTOM STYLE -->
+            <style>
+                    table.keep_with_colum> td {
+                        overflow: hidden;
+                        overflow-wrap:break-word;
+                    }
+           </style>
+
+           <t t-set="current_name_report" t-value="'df_maintenance.do_report_print_orders_resumen_cost'" />
+           <t t-call="nl_cfg_reports.load_configuracion_and_call_report" />
+            </t>
+       </template>
+
+
+        <template id="resumen_cost_detallado">
+            <table style="width:100%;border-spacing:0;cellspacing=0;">
+
+                <t t-foreach="get_centro_costo(domain_base)" t-as="current_record">
+                  <t t-set="current_cc_code" t-value="current_record.code"/>
+                  <t t-set="name_cc" t-value="current_record.name"/>
+                  <t t-call="df_maintenance.RC_seccion_header_cc_detallado"/>
+                   <t t-set="records_group" t-value="0"/>
+                   <t t-set="total_cc_GM" t-value="0"/>
+                   <t t-set="total_cc_MO" t-value="0"/>
+                   <t t-set="total_cc_GT" t-value="0"/>
+                   <t t-set="total_cc_TT" t-value="0"/>
+
+                    <t t-foreach="get_equipos(domain_base,current_record.id)" t-as="e">
+                         <t t-call="df_maintenance.RC_seccion_header_equipos"/>
+                         <tbody>
+                                 <t t-set="count_records" t-value="count_records + 1"/>
+                                 <t t-set="records_group" t-value="records_group + 1"/>
+
+                                  <t t-set="total_eq_GM" t-value="0"/>
+                                   <t t-set="total_eq_MO" t-value="0"/>
+                                   <t t-set="total_eq_GT" t-value="0"/>
+                                   <t t-set="total_eq_TT" t-value="0"/>
+
+                              <t t-foreach="get_ordenes_equipos(domain_base,current_record.id,e.id)" t-as="od">
+
+                                  <t t-call="df_maintenance.RC_seccion_header_orden"/>
+
+                                     <t t-set="total_cc_GM" t-value="total_cc_GM + od['product_amount']"/>
+                                     <t t-set="total_cc_MO" t-value="total_cc_MO + od['labor_amount']"/>
+                                     <t t-set="total_cc_GT" t-value="total_cc_GT + 0.00"/>
+                                     <t t-set="total_cc_TT" t-value="total_cc_TT + od['product_amount'] + od['labor_amount']"/>
+
+                                     <t t-set="total_res_GM" t-value="total_res_GM + od['product_amount']"/>
+                                     <t t-set="total_res_MO" t-value="total_res_MO + od['labor_amount']"/>
+                                     <t t-set="total_res_GT" t-value="total_res_GT + 0.00"/>
+                                     <t t-set="total_res_TT" t-value="total_res_TT + od['product_amount'] + od['labor_amount']"/>
+
+                                       <t t-set="total_eq_GM" t-value="total_eq_GM + od['product_amount']"/>
+                                       <t t-set="total_eq_MO" t-value="total_eq_MO + od['labor_amount']"/>
+                                       <t t-set="total_eq_GT" t-value="total_eq_GT + 0.00"/>
+                                       <t t-set="total_eq_TT" t-value="total_eq_TT + od['product_amount'] +od['labor_amount']"/>
+
+                                        <t t-set="total_cc_GM" t-value="total_cc_GM + od['product_amount']"/>
+                                        <t t-set="total_cc_MO" t-value="total_cc_MO + od['labor_amount']"/>
+                                        <t t-set="total_cc_GT" t-value="total_cc_GT + 0.00"/>
+                                        <t t-set="total_cc_TT" t-value="total_cc_TT + od['product_amount'] +od['labor_amount']"/>
+
+                                         <t t-set="total_res_GM" t-value="total_res_GM + od['product_amount']"/>
+                                         <t t-set="total_res_MO" t-value="total_res_MO + od['labor_amount']"/>
+                                         <t t-set="total_res_GT" t-value="total_res_GT + 0.00"/>
+                                         <t t-set="total_res_TT" t-value="total_res_TT + od['product_amount'] +od['labor_amount']"/>
+                              </t>
+                              <t t-call="df_maintenance.RC_seccion_footer_eq_detallado"/>
+                         </tbody>
+                    </t>
+
+                    <t t-call="df_maintenance.RC_seccion_footer_cc_detallado"/>
+                </t>
+                <t t-call="df_maintenance.RC_totales_detallado"/>
+            </table>
+        </template>
+
+        <template id="do_report_print_orders_resumen_cost">
+
+                <div class="page">
+                        <t t-set="dicc_estado" t-value="{'free':'Libre','in_progress':'En progreso','finished':'Terminado', 'posted':'Contabilizado', 'history':'Histórico', 'cancelled':'Cancelado' }" />
+                        <t t-set="total_records" t-value="len(docs)" />
+                        <t t-set="count_records" t-value="0"/>
+                        <t t-set="total_res_GM" t-value="0"/>
+                        <t t-set="total_res_MO" t-value="0"/>
+                        <t t-set="total_res_GT" t-value="0"/>
+                        <t t-set="total_res_TT" t-value="0"/>
+                        
+                        <t t-set="style_total" t-value="detail_right + font_group_right"/>
+                        <t t-set="style_total_center" t-value="detail_center + font_group_center"/>
+
+                        <t t-if="not detallado">
+                            <t t-set="report_main_title" t-value="'Costos Reales de Mantenimiento por equipos'" />
+                            <div t-attf-class="#{'header' if repeat_header else 'o_boxed_header'}">
+                                <t t-call="nl_cfg_reports.custom_logo_and_title" />
+                            </div>
+                            <t t-call="df_maintenance.RC_seccion_tabla_entidad" />
+                            <t t-call="df_maintenance.resumen_cost_normal" />
+                            </t>
+                       <t t-else="">
+                            <t t-set="report_main_title" t-value="'Detalles de las Ordenes de servicio'" />
+                            <div t-attf-class="#{'header' if repeat_header else 'o_boxed_header'}">
+                                <t t-call="nl_cfg_reports.custom_logo_and_title" />
+                            </div>
+                            <t t-call="df_maintenance.RC_seccion_tabla_entidad" />
+                           <t t-call="df_maintenance.resumen_cost_detallado" />
+                       </t>
+                       <t t-call="df_maintenance.cfg_cambio_pagina" />
+                </div>
+                 <div class="footer" t-att-style="std_footer">
+                      <t t-call="df_maintenance.pie_de_pagina" />
+                 </div>
+        </template>
+
+
+    </data>
+
+</odoo>

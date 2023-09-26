@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_df_maintenance_equipment_subcategory_tree" model="ir.ui.view">
+            <field name="name">df.maintenance.equipment.subcategory.tree</field>
+            <field name="model">df.maintenance.equipment.subcategory</field>
+            <field eval="100" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Maintenance Subcategory">
+                    <field name="name"/>
+                    <field name="code"/>
+                </tree>
+            </field>
+        </record>
+        <record id="df_maintenance_equipment_subcategory_form_view" model="ir.ui.view">
+            <field name="name">df.maintenance.equipment.subcategory.form</field>
+            <field name="model">df.maintenance.equipment.subcategory</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Subcategory" duplicate="false">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" />
+                            </group>
+                            <group>
+                                <field name="code" />
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="df_action_maintenance_equipment_subcategory" model="ir.actions.act_window">
+            <field name="name">Maintenance Subcategory</field>
+            <field name="res_model">df.maintenance.equipment.subcategory</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_df_maintenance_equipment_subcategory_tree"/>
+        </record>
+    </data>
+</odoo>

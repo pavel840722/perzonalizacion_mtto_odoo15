@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="maintenance_team_view_tree_inherit" model="ir.ui.view">
+        <field name="name">maintenance.team.tree.inherit</field>
+        <field name="model">maintenance.team</field>
+        <field name="inherit_id" ref="maintenance.maintenance_team_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="serie"/>
+                <field name="brigades" widget="many2many_tags"/>
+<!--                <field name="analytic_account"/>-->
+<!--                <field name="hr_deparment"/>-->
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="df_maintenance_preventive_programming_form_view" model="ir.ui.view">
+            <field name="name">Initialize Schedule</field>
+            <field name="model">df.maintenance.object.template</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Initialize Schedules">
+                    <group colspan="6">
+                        <field name="asset_id" options="{'save_readonly': 1}" readonly="context.get('asset_id', False)" domain="[('maintenance_template_id','=',False)]"/>
+                        <field name="template_id" options='{"nocreate": true}' attrs="{'readonly': [('asset_id','=',False)]}" domain="[('state','=','confirmed')]"/>
+                        <field name="date_initial_schedule"></field>
+                        <field name="initialize_schedule_id" invisible="True"/>
+                    </group>
+                    <field name="regimen" invisible="True"/>
+
+
+
+                    <field name="reading_record_wizard_ids" attrs="{'invisible': ['|','|',('regimen','not in',['both','reading']),('asset_id','=', False),('template_id', '=', False)]}">
+                        <tree string="Readings" editable="bottom">
+                            <field name="base_value"/>
+                            <field name="accumulated_value"/>
+                            <field name="last_reading_date"/>
+                            <field name="last_reading_value"/>
+                            <field name="average_value"/>
+                            <field name="uom_id"/>
+                            <field name="is_history" invisible="1"/>
+                            <field name="reading_id" invisible="1"/>
+                        </tree>
+                    </field>
+
+                    <group>
+                        <button string="Initialize" name="initialize" type="object" class="oe_highlight"
+                                attrs="{'invisible': ['|','|',('asset_id', '=', False),('template_id', '=', False),('initialize_schedule_id','!=', False)]}"/>
+
+                        <button string="Cancel" class="oe_link" special="cancel" attrs="{'invisible': ['|','|',('asset_id', '=', False),('template_id', '=', False),('initialize_schedule_id','!=', False)]}"/>
+                    </group>
+
+                </form>
+            </field>
+        </record>
+
+        <record id="df_action_maintenance_preventive_programming_form" model="ir.actions.act_window">
+            <field name="name">Initialize Schedules</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">df.maintenance.object.template</field>
+<!--            <field name="view_type">form</field>-->
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="df_maintenance_preventive_initialize_schedule_form_view" model="ir.ui.view">
+            <field name="name">Initialize Schedules</field>
+            <field name="model">df.maintenance.initialize.schedule</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Initialize Schedules">
+                    <group colspan="6">
+                        <field name="asset_category_id"/>
+                        <field name="template_id" attrs="{'readonly': [('asset_category_id','=',False)]}" domain="[('state','=','confirmed')]"/>
+                        <field name="date_initial_schedule" invisible="0"/>
+                    </group>
+                        <field colspan="4" name="asset_template_ids" nolabel="1" attrs="{'invisible': [('template_id','=','False')]}">
+                            <tree editable="bottom" options='{"deletable": false, "addable": false, "selectable": false}'>
+                                <field name="asset_id" domain="[('maintenance_template_id','=',False)]"/>
+                                <field name="template_id" options='{"nocreate": true}'  attrs="{'readonly': [('asset_id','=',False)]}" domain="[('state','=','confirmed')]"/>
+                                <field name="regimen" invisible="True"/>
+                            </tree>
+                        </field>
+
+                    <footer>
+                        <button string="Next" name="asociate_object_template" type="object" class="oe_highlight" attrs="{'invisible': [('asset_template_ids','=',[])]}"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="df_maintenance_preventive_initialize_meter_readings_form_view" model="ir.ui.view">
+            <field name="name">Initialize Schedules</field>
+            <field name="model">df.maintenance.initialize.schedule</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Initialize Schedules">
+                    <group colspan="6">
+                        <field colspan="4" name="asset_template_ids" nolabel="1">
+                            <tree options='{"deletable": false, "addable": false, "selectable": false}'>
+                                <field name="asset_id" readonly="True" options="{'save_readonly': 1}"/>
+                                <field name="text_uom_ids" readonly="True"/>
+                                <field name="template_id" invisible="True" />
+                                <field name="regimen" invisible="True"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <footer>
+                        <button string="Back" name="back_initialize" type="object" class="oe_highlight" />
+                        <button string="Next" name="initialize" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="df_action_maintenance_initialize_schedule_form" model="ir.actions.act_window">
+            <field name="name">Initialize Schedules</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">df.maintenance.initialize.schedule</field>
+            <field name="view_id" ref="df_maintenance_preventive_initialize_schedule_form_view"/>
+<!--            <field name="view_type">form</field>-->
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+        <record id="df_maintenance_preventive_schedule_form_view" model="ir.ui.view">
+            <field name="name">Initialized Schedules</field>
+            <field name="model">df.maintenance.preventive.schedule</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Initialized Schedules">
+                    <span string="Programming the selected maintenance objects is initialized successfully!" colspan="4"/>
+                    <newline />
+                    <separator string="" colspan="4"/>
+                    <footer>
+                        <button name="open_technical_records" string="Open Technical Records" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="df_action_maintenance_initialize_schedule_form" model="ir.actions.act_window">
+            <field name="name">Initialized Schedules</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">df.maintenance.preventive.schedule</field>
+<!--            <field name="view_type">form</field>-->
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

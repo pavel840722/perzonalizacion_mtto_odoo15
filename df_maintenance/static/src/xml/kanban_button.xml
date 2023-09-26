@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+   <t t-extend="KanbanView.buttons" t-name="button_near_create.button">
+       <t t-jquery="button" t-operation="after">
+               <button
+                       t-if="widget.modelName == 'maintenance.request'"
+                       name="%(search_work_order)d"
+                       class="btn btn-primary open_wizard_action_kanban oe_highlight"
+                       type="action">Rastreo de Petición
+               </button>
+       </t>
+   </t>
+</templates>

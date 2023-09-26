@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="df_maintenance_work_order_assign_form_view" model="ir.ui.view">
+            <field name="name">Work Order Assignation Completed</field>
+            <field name="model">df.maintenance.work.order.assign</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Work Order">
+                    <span> The Work Order associated with the Request has been created successfully!</span>
+                    <footer>
+                        <button name="assign_order" string="Open Work Order" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="df_action_maintenance_work_order_assign_form" model="ir.actions.act_window">
+            <field name="name">Work Order Assignation Completed</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">df.maintenance.work.order.assign</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

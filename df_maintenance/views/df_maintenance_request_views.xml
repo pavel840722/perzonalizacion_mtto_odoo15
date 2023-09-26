@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_equipment_request_view_search_inherit" model="ir.ui.view">
+            <field name="name">equipment.request.search.inherit</field>
+            <field name="model">maintenance.request</field>
+            <field name="inherit_id" ref="maintenance.hr_equipment_request_view_search"/>
+            <field name="arch" type="xml">
+                <field name="name" position="before">
+                    <field name="request_number"/>
+                    <field name="workshop_number"/>
+                </field>
+                <xpath expr="//filter[@name='inactive']" position="attributes">
+                    <attribute name="attrs">{'invisible':1}</attribute>
+                </xpath>
+
+                <xpath expr="//filter[@name='my_maintenances']" position="after">
+                    <filter string="Project" name="project" domain="[('is_project', '=', True)]"/>
+                    <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hr_equipment_request_view_kanban_inherit" model="ir.ui.view">
+            <field name="name">equipment.request.kanban.inherit</field>
+            <field name="model">maintenance.request</field>
+            <field name="inherit_id" ref="maintenance.hr_equipment_request_view_kanban"/>
+            <field name="arch" type="xml">
+                <kanban position="attributes">
+                    <attribute name="records_draggable">false</attribute>
+                </kanban>
+                <xpath expr="//div[contains(@t-attf-class, 'oe_kanban_card')]" position="attributes">
+                    <attribute name="t-att-style">(record.stage_id.raw_value == 1) and 'background-color: #f6f7fb;' or
+                        (record.stage_id.raw_value == 2) and 'background-color: #f5b9ac;' or (record.stage_id.raw_value
+                        == 3) and 'background-color: #b4f995;' or (record.stage_id.raw_value == 4) and
+                        'background-color: #d595f9;' or (record.stage_id.raw_value == 5) and 'background-color:
+                        #faf5b5;'
+                    </attribute>
+                </xpath>
+                <field name="priority" position="attributes">
+                    <attribute name="readonly">True</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="hr_equipment_request_view_form_inherit" model="ir.ui.view">
+            <field name="name">hr.equipment.request.view.form.inherit</field>
+            <field name="model">maintenance.request</field>
+            <field name="inherit_id" ref="maintenance.hr_equipment_request_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='employee_id']" position="replace">
+                    <field name="employee_id" readonly="1" force_save="1" string="Created By"
+                    options="{'no_create_edit': True, 'no_open': True}"/>
+                </xpath>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="duplicate">false</attribute>
+                </xpath>
+                <xpath expr="//header/button[@name='archive_equipment_request']" position="attributes">
+                    <attribute name="attrs">{'invisible': 1}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="warning_request" invisible="1"/>
+                    <div class="alert alert-warning mt8 o_notification_manager" role="alert"
+                         attrs="{'invisible': [('warning_request', '=', False)]}">
+                        <!--                        <button name="close_notification" string="Cancel" type="object" class="oe_highlight"/>-->
+                        <i class="fa fa-fw fa-warning" role="img" aria-label="Synchronisation Error"
+                           title="Synchronisation Error"></i>
+                        <!--                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"> &#215; </button>-->
+
+                        <!--                        <button special="cancel" data-hotkey="z" string="X" class="btn-secondary"/>-->
+                        <h3
+                                attrs="{'invisible': [('warning_request', '=', False)]}">The equipment selected for the
+                            maintenance request is currently in a request
+                        </h3>
+
+                    </div>
+                </xpath>
+                <xpath expr="//header/button[@name='archive_equipment_request']" position="after">
+                    <field name="save" invisible="1"/>
+                    <field name="generate_order_visible" invisible="1"/>
+                    <field name="assign_order" invisible="1"/>
+                    <button name="action_canceled" string="Cancel Request" class="oe_highlight" type="object"
+                            attrs="{'invisible': ['|',('stage_id', '!=', 1),('save', '=', False)]}"
+                            help="This allow to change the status of the request to Cancelled"
+                    /><!--groups="l10n_cu_maintenance.group_maintenance_user"-->
+                    <!--                    <button name="action_attended" string="Attended" class="oe_highlight" type="object"-->
+                    <!--                            attrs="{'invisible': [('stage_id', '!=', 1)]}"-->
+                    <!--                            help="This allow to change the status of the request to Attended"/>&lt;!&ndash;groups="l10n_cu_maintenance.group_maintenance_user"&ndash;&gt;-->
+                    <!--                    <button name="action_insolvable" string="Insolvable" class="oe_highlight" type="object"-->
+                    <!--                            attrs="{'invisible': [('stage_id', '!=', 1)]}"-->
+                    <!--                            help="This allow to change the status of the request to Insolvable"-->
+                    <!--                    />&lt;!&ndash;groups="l10n_cu_maintenance.group_maintenance_user"&ndash;&gt;-->
+                    <button name="action_order_assign" string="Generate work order" class="oe_highlight" type="object"
+                            confirm="This action will generate a work order associated with the request. Please confirm intention to do so."
+                            help="This allow generate a work order from the request"
+                            attrs="{'invisible': ['|','|',('stage_id','in',[3,4,5]), ('save', '=', False), ('generate_order_visible','=',False)]}"/> <!--groups="l10n_cu_maintenance.group_maintenance_user"--> <!--states="pending"-->
+                    <!--                    <button name="action_pending" string="Pending" class="oe_highlight" type="object" states="canceled,attended,insolvable" help="This allow to change the status of the request to Pending"/>-->
+                    <!--                    <button name="send_message_to_planners_acction" string="Enviar MSG" class="oe_highlight" type="object" invisible="1"/>-->
+                </xpath>
+
+                <xpath expr="//div[hasclass('oe_title')]" position="before">
+                    <div class="oe_title">
+                        <h4>
+                            <span attrs="{'invisible': [('assign_order', '!=', False)]}">Draft Work Request</span>
+                            <span attrs="{'invisible': [('assign_order', '=', False)]}">Work Request</span>
+                            <field name="request_number" class="oe_inline"
+                                   attrs="{'invisible': [('assign_order', '=', False)]}"/>
+                        </h4>
+                    </div>
+                    <field name="active" invisible="1"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                            attrs="{'invisible': [('active', '=', True)]}"/>
+                </xpath>
+                <field name="name" position="attributes">
+                    <attribute name="attrs">{'readonly':['|',('stage_id','!=',1),('assign_order','=',True)]}</attribute>
+                </field>
+                <field name="employee_id" position="attributes">
+                    <attribute name="attrs">{'readonly':['|',('stage_id','!=',1),('assign_order','=',True)]}</attribute>
+                </field>
+                <field name="email_cc" position="attributes">{'readonly':['|',('stage_id','!=',1),('assign_order','=',True)]}
+                    <attribute name="attrs">{'invisible':1}</attribute>
+                </field>
+                <field name="email_cc" position="after">
+                    <field name="is_project"/>
+                    <field name="mtto_plant" invisible="1"/>
+                </field>
+                <field name="is_project" position="attributes">
+                    <attribute name="attrs">{'readonly':['|',('stage_id','!=',1),('assign_order','=',True)]}</attribute>
+                </field>
+                <field name="description" position="attributes">
+                    <attribute name="attrs">{'readonly':['|',('stage_id','!=',1),('assign_order','=',True)]}</attribute>
+                </field>
+                <field name="stage_id" position="attributes">
+                    <attribute name="readonly">True</attribute>
+                </field>
+                <xpath expr="//field[@name='stage_id']" position="attributes">
+                    <attribute name="clickable">0</attribute>
+                </xpath>
+                <field name="stage_id" position="attributes">
+                    <attribute name="readonly">True</attribute>
+                </field>
+                <xpath expr="//field[@name='equipment_id']" position="before">
+                    <field name="cost_center" attrs="{'readonly':['|',('stage_id','!=',1),('assign_order','=',True)]}"/>
+                    <field name="department_id" attrs="{'readonly':['|',('stage_id','!=',1),('cost_center','=',False)],'invisible':[('mtto_plant','=',False)],'required':[('mtto_plant','=',True)]}"/>
+                    <field name="department_allowed" invisible="1"/>
+                    <field name="cost_center_allowed" invisible="1"/>
+                    <field name="stock_asset_id"
+                           attrs="{'readonly':['|','|',('stage_id','!=',1),('cost_center','=',False),('assign_order','=',True)]}"/>
+                </xpath>
+                <field name="stock_asset_id" position="attributes">
+                    <attribute name="domain">[('analytic_account', '=', cost_center)]</attribute>
+                </field>
+                <field name="equipment_id" position="attributes">
+                    <attribute name="domain">[('stock_asset_id', '=', stock_asset_id)]</attribute>
+                    <attribute name="require">True</attribute>
+                    <attribute name="attrs">{'readonly':['|','|',('stage_id','!=',1),('stock_asset_id', '=', False),('assign_order','=',True)]}
+                    </attribute>
+                </field>
+                <xpath expr="//field[@name='schedule_date']" position="attributes">
+                    <attribute name="attrs">{'invisible': 1}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='duration']" position="attributes">
+                    <attribute name="attrs">{'invisible': 1}</attribute>
+                </xpath>
+                <xpath expr="//label[@for='duration']" position="attributes">
+                    <attribute name="attrs">{'invisible': 1}</attribute>
+                </xpath>
+                <xpath expr="//span[@class='ml8']" position="attributes">
+                    <attribute name="attrs">{'invisible': 1}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='maintenance_team_id']" position="attributes">
+                    <attribute name="attrs">{'invisible': 1}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="attributes">
+                    <attribute name="attrs">{'invisible': 1}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='priority']" position="replace">
+                    <xpath expr="//field[@name='request_date']" position="move"/>
+                    <xpath expr="//field[@name='maintenance_type']" position="move"/>
+                    <field name="priority_zlc" attrs="{'readonly':['|',('stage_id','!=',1),('assign_order','=',True)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='maintenance_type']" position="attributes">
+                    <attribute name="widget">selection</attribute>
+                    <attribute name="attrs">{'readonly': ['|',('stage_id','!=',1),('assign_order','=',True)]}</attribute>
+                </xpath>
+                <field name="category_id" position="after">
+                    <field name="subcategory_id" force_save="1"/>
+                    <field name="cancellation_reasons" attrs="{'invisible':[('stage_id', '!=', 5)]}"/>
+                    <field name="date_cancellation" attrs="{'invisible':[('stage_id', '!=', 5)]}"/>
+                </field>
+                <xpath expr="//field[@name='description']" position="after">
+                    <group colspan="4">
+                        <field name="request_areas" nolabel="1" attrs="{'readonly':[('stage_id','in',[3,4,5])], 'invisible':[('mtto_plant','=',True)]}">
+                            <tree string="Request areas" editable="bottom">
+                                <field name="area_id"/>
+                                <field name="brigades_ids" widget="many2many_tags"/>
+                            </tree>
+                        </field>
+                        <notebook colspan="4" attrs="{'invisible': [('work_order_ids', '=', [])]}">
+                            <page string="Work Orders">
+                                <field name="work_order_ids" options="{'no_open': True}">
+                                    <tree string="Work Order">
+                                        <field name="order_no"/>
+                                        <field name="create_date"/>
+                                        <field name="priority"/>
+                                        <field name="asset_id"/>
+                                        <field name="stock_asset_id"/>
+                                        <field name="work_type"/>
+                                        <field name="responsible_employee_id"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hr_equipment_request_view_tree_inherit" model="ir.ui.view">
+            <field name="name">equipment.request.tree.inherit</field>
+            <field name="model">maintenance.request</field>
+            <field name="inherit_id" ref="maintenance.hr_equipment_request_view_tree"/>
+            <field name="arch" type="xml">
+                <!--                <xpath expr="//field[@name='employee_id']" position="after">-->
+                <!--                    <field name="user_id" invisible="1"/>-->
+                <!--                </xpath>-->
+                <field name="name" position="before">
+                    <field name="request_number"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="hr_equipment_request_action_from_order" model="ir.actions.act_window">
+            <field name="name">Maintenance Requests</field>
+            <field name="res_model">maintenance.request</field>
+            <field name="binding_model_id" ref="df_maintenance.model_df_maintenance_work_order"/>
+            <field name="view_mode">kanban,tree,form,pivot,graph,calendar</field>
+<!--            <field name="context">{-->
+<!--                'default_equipment_id': active_id.asset_id,-->
+<!--                }-->
+<!--            </field>-->
+<!--            <field name="domain">[('create_uid', '=', user.id)]</field>-->
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Add a new maintenance request
+                </p>
+                <p>
+                    Follow the process of the request and communicate with the collaborator.
+                </p>
+            </field>
+        </record>
+
+        <record id="hr_equipment_request_action_from_equipment" model="ir.actions.act_window">
+        <field name="name">Maintenance Requests</field>
+        <field name="res_model">maintenance.request</field>
+        <field name="binding_model_id" ref="maintenance.model_maintenance_equipment"/>
+        <field name="view_mode">kanban,tree,form,pivot,graph,calendar</field>
+        <field name="context">{
+            'default_equipment_id': active_id,
+            'default_cost_center': cost_center,
+            'default_stock_asset_id':stock_asset_id,
+        }</field>
+        <field name="domain">[('equipment_id', '=', active_id)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add a new maintenance request
+            </p><p>
+                Follow the process of the request and communicate with the collaborator.
+            </p>
+        </field>
+    </record>
+
+    <record id="maintenance.hr_equipment_request_action" model="ir.actions.act_window">
+        <field name="domain">[('create_uid', '=', uid)]</field>
+    </record>
+
+        <record id="maintenance_request_action" model="ir.actions.act_window">
+        <field name="name">Maintenance Requests</field>
+        <field name="res_model">maintenance.request</field>
+<!--        <field name="binding_model_id" ref="maintenance.model_maintenance_equipment"/>-->
+        <field name="view_mode">kanban,tree,form,pivot,graph,calendar</field>
+<!--        <field name="context">{-->
+<!--            'default_mtto_plant': True,-->
+<!--        }</field>-->
+        <field name="domain">[('mtto_plant', '=', False)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add a new maintenance request
+            </p><p>
+                Follow the process of the request and communicate with the collaborator.
+            </p>
+        </field>
+        </record>
+
+    </data>
+</odoo>

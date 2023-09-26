@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+         <!--LP : Listado de Peticiones-->
+
+        <template id="LP_seccion_tabla_entidad">
+            <t>
+                <p class="text-right">
+                    Período: <t t-esc="date_start" t-options="{'widget':'date','format':'dd/MM/yyyy'}"/>
+                    al <t t-esc="date_end" t-options="{'widget':'date','format':'dd/MM/yyyy'}"/>
+                </p>
+                <t t-if="stage_id">
+                    <div class="header">
+                        Etapa: <t t-esc="stage_id[1]" />
+                    </div>
+                </t>
+                <t t-if="cost_center_allowed">
+                    <div class="header">
+                         Centro de costo : <t t-esc="docs[0].cost_center.code"/> <t t-esc="docs[0].cost_center.name" />
+                    </div>
+                </t>
+                <t t-if="stock_asset_id">
+                    <div class="header">
+                         Localización del activo: <t t-esc="docs[0].stock_asset_id.code" /> <t t-esc="docs[0].stock_asset_id.name" />
+                    </div>
+                </t>
+                <t t-if="equipment_id">
+                    <div class="header">
+                         Equipo: <t t-esc="docs[0].equipment_id.name +  ' ( '  + docs[0].equipment_id.asset_number  + ' ( ' "    />
+                    </div>
+                </t>
+
+                <br/>
+            </t>
+        </template>
+
+        <template id="LP_seccion_encabezado_de_columnas">
+            <t>
+                <thead t-att-style="bg_main">
+                    <td t-att-style="std_header_center">No.Petición</td>
+                    <t t-if="not cost_center_allowed" >
+                        <td t-att-style="std_header_center">Centro de costo</td>
+                    </t>
+                    <t t-if="not stock_asset_id" >
+                         <td t-att-style="std_header_center">Localización del activo</td>
+                    </t>
+
+                    <td t-att-style="std_header_center">Fecha</td>
+                    <td t-att-style="std_header_center">Etapa</td>
+                     <t t-if="not equipment_id" >
+                          <td t-att-style="std_header_center">No. de Instalación</td>
+                     </t>
+                </thead>
+            </t>
+        </template>
+
+        <template id="LP_seccion_detalles">
+
+           <t>
+              <tr t-att-style="bg_deta">
+                  <td t-att-style="detail_center"><t t-esc="o.request_number"/></td>
+                    <t t-if="not cost_center_allowed" >
+                         <td t-att-style="detail_left"><t t-esc="o.cost_center.name"/></td>
+                    </t>
+                    <t t-if="not stock_asset_id" >
+                         <td t-att-style="detail_left"><t t-esc="o.stock_asset_id.name"/></td>
+                    </t>
+
+                     <td t-att-style="detail_center"> <t t-esc="o['request_date']" t-options="{'widget':'date','format':'dd/MM/yyyy'}"/> </td>
+                     <td t-att-style="detail_left"> <t t-esc="o.stage_id.name" /> </td>
+                     <t t-if="not equipment_id" >
+                          <td t-att-style="detail_center"> <t t-esc="o.equipment_id.asset_number" /> </td>
+                     </t>
+              </tr>
+          </t>
+        </template>
+
+       <template id="LP_totales_resumen">
+           <t>
+              <tr>
+                <td t-att-style="st_center" >  </td>
+                <td t-att-style="st_left" >TOTAL </td>
+                <td t-att-style="st_center" > </td>
+
+                <td t-att-style="st_right"> <t t-esc="TOTAL_GM_REAL" t-options='{"widget": "float", "precision": 2}'/></td>
+              </tr>
+          </t>
+
+        </template>
+
+        <template id="report_print_request">
+        <t t-call="web.basic_layout">
+            <!-- CUSTOM STYLE -->
+            <style>
+                    table.keep_with_colum> td {
+                        overflow: hidden;
+                        overflow-wrap:break-word;
+                    }
+           </style>
+           <t t-set="current_name_report" t-value="'df_maintenance.do_report_print_request'" />
+           <t t-call="nl_cfg_reports.load_configuracion_and_call_report" />
+        </t>
+    </template>
+
+        <template id="do_report_print_request">
+                
+
+                <div class="page">
+
+                            <t t-set="dicc_estado" t-value="{'free':'Libre','in_progress':'En progreso','finished':'Terminado', 'posted':'Contabilizado', 'history':'Histórico', 'cancelled':'Cancelado' }" />
+                            <table  style="width:100%;border-spacing:0;cellspacing=0;">
+				<t t-set="report_main_title" t-value="'LISTADO DE PETICIONES'" />
+
+                <t t-if="repeat_header">
+                    <div class="header">
+                        <t t-call="nl_cfg_reports.custom_logo_and_title" />
+                    </div>
+                </t>
+               <t t-else="">
+                   <div class="o_boxed_header">
+                     <t t-call="nl_cfg_reports.custom_logo_and_title" />
+                  </div>
+               </t>
+                <t t-call="df_maintenance.LP_seccion_tabla_entidad" />
+                                <t t-call="df_maintenance.LP_seccion_encabezado_de_columnas" />
+                                <t t-set="contador_records" t-value="0" />
+                                <t t-set="total_records" t-value="len(docs)" />
+                                <t t-if="total_records== 0">
+                                    <t t-call="df_maintenance.MESSAGE_data_empty" />
+                                </t>
+                                <tbody>
+                                    <t t-foreach="docs" t-as="o">
+                                       <t t-set="contador_records" t-value="contador_records + 1" />
+                                       <t t-call="df_maintenance.LP_seccion_detalles" />
+                                    </t>
+
+                                </tbody>
+
+                            </table>
+                            <t t-call="df_maintenance.cfg_cambio_pagina" />
+
+                        </div>
+
+                        <div class="footer" t-att-style="std_footer">
+                            <t t-call="df_maintenance.pie_de_pagina" />
+                        </div>
+        </template>
+    </data>
+
+</odoo>

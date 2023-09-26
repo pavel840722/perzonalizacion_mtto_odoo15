@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_df_maintenance_failure_cause_tree" model="ir.ui.view">
+            <field name="name">df.maintenance.failure.cause.tree</field>
+            <field name="model">df.maintenance.failure.cause</field>
+            <field eval="100" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Failure Causes">
+                    <field name="name" />
+                </tree>
+            </field>
+        </record>
+        <record id="df_maintenance_failure_cause_form_view" model="ir.ui.view">
+            <field name="name">df.maintenance.failure.cause.form</field>
+            <field name="model">df.maintenance.failure.cause</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Work Order" duplicate="false">
+                    <sheet>
+                        <group>
+                            <field name="name" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="df_action_maintenance_failure_cause" model="ir.actions.act_window">
+            <field name="name">Failure Causes</field>
+            <field name="res_model">df.maintenance.failure.cause</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_df_maintenance_failure_cause_tree"/>
+        </record>
+    </data>
+</odoo>

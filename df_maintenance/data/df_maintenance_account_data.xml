@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="df_maintenance_account_data" model="df.maintenance.accounts">
+            <field name="name">Maintenance accounts</field>
+            <field name="project"></field>
+            <field name="service_transfer"></field>
+            <field name="workforce"></field>
+            <field name="workforce_recovery"></field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+         <!--CPP : Listado de Ordenes-->
+
+        <template id="CPP_seccion_tabla_entidad">
+            <t>
+                <p class="text-right">
+                    Período: <t t-esc="date_start" t-options="{'widget':'date','format':'dd/MM/yyyy'}"/>
+                    al <t t-esc="date_end" t-options="{'widget':'date','format':'dd/MM/yyyy'}"/>
+                </p>
+                <t t-if="maintenance_team_id">
+                    <div class="header">
+                        Area de Mantenimiento: <t t-esc="docs[0].maintenance_team_id.name" />
+                    </div>
+                </t>
+                <t t-if="brigade_id">
+                    <div class="header">
+                         Brigada: <t t-esc="docs[0].brigade_id.hr_department.name"/>
+                    </div>
+                </t>
+
+                <br/>
+            </t>
+        </template>
+
+        <template id="CPP_seccion_encabezado_de_columnas">
+            <t>
+                <thead t-att-style="bg_main">
+                     <t t-if="not maintenance_team_id" >
+                        <td t-att-style="std_header_center">Area de Mantenimiento</td>
+                    </t>
+                    <t t-if="not brigade_id" >
+                        <td t-att-style="std_header_center">Brigada</td>
+
+                    </t>
+                    <td t-att-style="std_header_center">Centro de costo de la Brigada</td>
+                    <td t-att-style="std_header_center">No. Orden</td>
+                    <td t-att-style="std_header_center">No.Petición</td>
+                    <td t-att-style="std_header_center">Fecha</td>
+                    <td t-att-style="std_header_center">Estado</td>
+
+                </thead>
+            </t>
+
+        </template>
+
+       <template id="CPP_seccion_detalles">
+
+           <t>
+              <tr t-att-style="bg_deta">
+                 <t t-if="not maintenance_team_id">
+                    <td t-att-style="detail_left" > <t t-esc="o.maintenance_team_id.name"/> </td>
+                 </t>
+                 <t t-if="not brigade_id">
+                    <td t-att-style="detail_left" > <t t-esc="o.brigade_id.hr_department.name"/> </td>
+                 </t>
+                  <t t-if="not brigade_cost_center">
+                    <td t-att-style="detail_left" > <t t-esc="o.brigade_cost_center.name"/> </td>
+                 </t>
+                 <td t-att-style="detail_center" > <t t-esc="o.order_no"/> </td>
+                 <td t-att-style="detail_center" > <t t-esc="o['request_nro']"/> </td>
+                 <td t-att-style="detail_center"> <t t-esc="o['date_start']" t-options="{'widget':'date','format':'dd/MM/yyyy'}"/> </td>
+                 <td t-att-style="detail_center" > <t t-esc="dicc_estado.get(o['state'],'?')"/> </td>
+
+              </tr>
+          </t>
+        </template>
+
+       <template id="CPP_totales_resumen">
+           <t>
+              <tr>
+                <td t-att-style="st_center" >  </td>
+                <td t-att-style="st_left" >TOTAL </td>
+                <td t-att-style="st_center" > </td>
+
+                <td t-att-style="st_right"> <t t-esc="TOTAL_GM_REAL" t-options='{"widget": "float", "precision": 2}'/></td>
+              </tr>
+          </t>
+
+        </template>
+
+        <template id="report_print_orders">
+        <t t-call="web.basic_layout">
+            <!-- CUSTOM STYLE -->
+            <style>
+                    table.keep_with_colum> td {
+                        overflow: hidden;
+                        overflow-wrap:break-word;
+                    }
+           </style>
+           <t t-set="current_name_report" t-value="'df_maintenance.do_report_print_orders'" />
+           <t t-call="nl_cfg_reports.load_configuracion_and_call_report" />
+        </t>
+    </template>
+
+        <template id="do_report_print_orders">
+                <t t-set="report_main_title" t-value="'LISTADO DE ORDENES'" />
+
+                <t t-if="repeat_header">
+                    <div class="header">
+                        <t t-call="nl_cfg_reports.custom_logo_and_title" />
+                    </div>
+                </t>
+               <t t-else="">
+                   <div class="o_boxed_header">
+                     <t t-call="nl_cfg_reports.custom_logo_and_title" />
+                  </div>
+               </t>
+                <t t-call="df_maintenance.CPP_seccion_tabla_entidad" />
+
+                <div class="page">
+
+                             <t t-set="dicc_estado" t-value="{'free':'Libre','in_progress':'En progreso','finished':'Terminado', 'posted':'Contabilizado', 'history':'Histórico', 'cancelled':'Cancelado' }" />
+                            <table  style="width:100%;border-spacing:0;cellspacing=0;">
+                                <t t-call="df_maintenance.CPP_seccion_encabezado_de_columnas" />
+                                <t t-set="contador_records" t-value="0" />
+                                <t t-set="total_records" t-value="len(docs)" />
+                                <t t-if="total_records== 0">
+                                    <t t-call="df_maintenance.MESSAGE_data_empty" />
+                                </t>
+                                <t t-set="style_total" t-value="detail_right + font_group_right"/>
+                                <tbody>
+                                    <t t-foreach="docs" t-as="o">
+                                       <t t-set="contador_records" t-value="contador_records + 1" />
+                                       <t t-call="df_maintenance.CPP_seccion_detalles" />
+                                    </t>
+
+                                </tbody>
+
+                            </table>
+                            <t t-call="df_maintenance.cfg_cambio_pagina" />
+
+                </div>
+
+                <div class="footer" t-att-style="std_footer">
+                    <t t-call="df_maintenance.pie_de_pagina" />
+                </div>
+        </template>
+    </data>
+
+</odoo>

@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="df_maintenance_work_order_view_search" model="ir.ui.view">
+            <field name="name">df.maintenance.work.search</field>
+            <field name="model">df.maintenance.work.order</field>
+            <field name="arch" type="xml">
+                <search string="Maintenance Work Search">
+                    <field name="active"/>
+                    <field name="order_no"/>
+                    <filter string="In progress" name="inactive" domain="[('state', '=', 'in_progress')]"/>
+                    <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_df_work_order_tree" model="ir.ui.view">
+            <field name="name">df_work_order.tree</field>
+            <field name="model">df.maintenance.work.order</field>
+            <field eval="100" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Work Orders"  create="0">
+                    <field name="order_no" />
+                    <field name="request_nro" />
+                    <field name="create_date" />
+                    <field name="priority" />
+                    <field name="asset_id" />
+                    <field name="stock_asset_id" />
+                    <field name="work_type" />
+
+<!--                    <field name="responsible_employee_id" />-->
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="df_maintenance_work_order_form_view" model="ir.ui.view">
+            <field name="name">df.maintenance.work.order.form</field>
+            <field name="model">df.maintenance.work.order</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Work Orders" duplicate="false" create="0">
+                    <header>
+                        <button name="action_cancel" class="oe_highlight"  type="object" string="Cancel"  attrs="{'invisible': ['|', '|','|','|',('active', '=', False),('state', '=', 'finished'),('state', '=', 'history'),('state', '=', 'posted'),('state', '=', 'cancelled')]}" help="This allows to cancel the work order" groups="df_maintenance.group_maintenance_executor,df_maintenance.group_maintenance_administrator"/> <!--groups="l10n_cu_maintenance.group_maintenance_user"-->
+                        <button name="action_open" string="Open" class="oe_highlight"  type="object" context="{'abrir': 1}" attrs="{'invisible': ['|', '|','|','|','|',('active', '=', False),('state', '=', 'in_progress'),('state', '=', 'finished'),('state', '=', 'history'),('state', '=', 'posted'),('state', '=', 'cancelled')]}" help="This allows to open the work order" groups="df_maintenance.group_maintenance_executor,df_maintenance.group_maintenance_administrator"/> <!--groups="l10n_cu_maintenance.group_maintenance_user"-->
+                        <button name="verify" string="Supervisar" type="object" class="oe_highlight"  attrs="{'invisible': ['|','|','|', '|','|','|','|',('completion', 'in', ('finished','insolvable')),('active', '=', False),('active', '=', False),('state', '=', 'finished'),('state', '=', 'cancelled'),('state', '=', 'history'),('state', '=', 'posted'),('order_no', '=', 'Nuevo')]}" groups="df_maintenance.group_maintenance_petitioner,df_maintenance.group_maintenance_administrator"/>
+                        <button name="action_close" string="Close" class="oe_highlight" type="object"  context="{'op' : 'finished'}" attrs="{'invisible': ['|','|','|','|','|','|',('active', '=', False),('state', '=', 'free'),('state', '=', 'finished'),('state', '=', 'history'),('state', '=', 'cancelled'),('completion', '=', False ),('completion', '=', 'unfinished' )]}" help="This allows closing the work order" groups="df_maintenance.group_maintenance_executor,df_maintenance.group_maintenance_administrator"/> <!--groups="l10n_cu_maintenance.group_maintenance_user"-->
+<!--                        <button name="print_report" string="Print report" class="oe_highlight"  states="open" type="object" default_focus="1"/>-->
+
+                        <field name="state" widget="statusbar"
+                               statusbar_colors="{&quot;waiting&quot;:&quot;blue&quot;,&quot;confirmed&quot;:&quot;blue&quot;}"/> <!--groups="l10n_cu_maintenance.group_maintenance_user"-->
+                    </header>
+
+                        <div class="oe_button_box" name="button_box">
+                            <button name="%(df_maintenance.hr_equipment_request_action_from_order)d"
+                                type="action"
+                                class="oe_stat_button"
+                                icon="fa-wrench">
+                                <field string="Request" name="request_count" widget="statinfo"/>
+                            </button>
+                            <button name="show_purchase"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-shopping-cart">
+                                <field string="Request Purchase" name="count_request_purchase" widget="statinfo"/>
+                            </button>
+                            <button name="stock_request_order_view"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-handshake-o">
+                                <field string="Expedition" name="count_stock_request" widget="statinfo"/>
+                            </button>
+                        </div>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                        <widget name="web_ribbon" title="Closed" bg_color="bg-danger" attrs="{'invisible': [('state', '!=', 'finished')]}"/>
+                        <widget name="web_ribbon" title="Supervised" bg_color="bg-info" attrs="{'invisible': [('completion', '=', False)]}"/>
+                        <div class="oe_title">
+                            <h4>
+                                <span attrs="{'invisible': [('state','!=','free')]}">Draft Work Order</span>
+                                <span attrs="{'invisible': [('state', '=', 'free')]}">Work Order</span><span> </span>
+                                <field name="order_no" class="oe_inline" attrs="{'invisible': [('state', '=', 'free')]}"/>
+                            </h4>
+                        </div>
+<!--                         <div class="oe_right oe_button_box">-->
+<!--                            <button name="send_notif_involved" string="Send notification to involved" class="oe_link" type="object" help="Send message to Responsible, Verifier and Employees" states="open"/>-->
+<!--                        </div>-->
+                        <group>
+                            <group>
+                                <field name="active" invisible="1"/>
+<!--                                <field name="employee_validate"/>-->
+                                <field name="create_date" readonly="1"/>
+
+                                <field name="date_start" default_focus="1" attrs="{'invisible': [('date_start', '=', False)] ,'readonly': ['|','|',('state', 'in', ('free','finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}"/>
+
+
+                                <field name="date_supervised" readonly="1" attrs="{'invisible': [('date_supervised', '=', False)]}" /> <!--on_change="onchange_date_end(date_end, completion, context)"/>-->
+<!--                                 <field name="observation" readonly="1" attrs="{'invisible': [('observation', '=', False)]}" />-->
+                                 <field name="date_end" readonly="1"  attrs="{'invisible': [('date_end', '=', False)]}" /> <!--on_change="onchange_date_end(date_end, completion, context)"/>-->
+                                <field name="maintenance_team_id" readonly="1" attrs="{'invisible': [('order_plant','=',True)]}"/>
+<!--                                <field name="workshop_cost_center" readonly="1" />-->
+                                <field name="brigade_id" readonly="1" attrs="{'invisible': [('order_plant','=',True)]}"/>
+                                <field name="brigade_cost_center" readonly="1" />
+                                <field name="order_plant" invisible="1"/>
+                                <field name="department_id" attrs="{'invisible': [('order_plant','=',False)]}"/>
+                            </group>
+                            <group>
+                                <field name="hours" widget="float_time" attrs="{'invisible':[('state','!=', 'finished')] ,'readonly': ['|',('state', 'in', ('free','finished','history','cancelled','posted')),('active', '=', False)]}"/>
+                                <field name="downtime" widget="float_time" attrs="{'readonly': ['|','|',('state', 'in', ('free','finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}"/>
+                                <field name="priority" attrs="{'readonly': ['|','|',('state', 'in', ('free', 'finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}"/>
+                                <field name="completion" readonly="1" attrs="{'invisible': [('completion', '=', False)]}"  /> <!-- on_change="onchange_completion(date_end, completion, context)"/>-->
+                                <field name="observation_final" readonly="1" attrs="{'invisible': [('observation_final', '=', False)]}" /> <!-- on_change="onchange_completion(date_end, completion, context)"/>-->
+
+                            </group>
+
+
+                        </group>
+                        <notebook> <!--groups="l10n_cu_maintenance.group_maintenance_user"-->
+                            <page string="General information" name="general_information"  autofocus="autofocus">
+                                <group>
+                                    <group string="Location" >
+                                        <field name="asset_id"  readonly="1"/> <!--attrs="{'readonly': ['|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False)]}"-->
+                                        <field name="stock_asset_id" readonly="1"/>
+                                        <field name="permanent" attrs="{'readonly': ['|','|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}"/>
+                                        <field name="is_subcontracted" attrs="{'readonly': ['|','|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}"/>
+                                    </group>
+                                    <group string="Other information">
+                                        <field name="work_type" attrs="{'readonly': ['|','|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}"/>
+                                        <field name="responsible_employee_id" attrs="{'readonly': ['|','|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}"/>
+                                        <field name="verified_employee_id" readonly="1"/>
+                                        <field name="performed_employee_id" readonly="1"/>
+                                        <field name="currency_id" groups="base.group_multi_currency" string="Currency" required="0" invisible="1"/>
+                                    </group>
+                                </group>
+                                <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                                <group string="Failure information" attrs="{'invisible': [('work_type', '!=', 'corrective')]}">
+                                        <field name="failure_cause_id"  attrs="{'readonly': ['|','|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}"/>
+                                </group>
+                                <group col="6" string="Amounts">
+                                    <field name="labor_amount" attrs="{'invisible':[('is_subcontracted','=', True)]}"/>
+                                    <field name="product_amount" attrs="{'invisible':[('is_subcontracted','=', True)]}"/>
+                                    <field name="total_amount" attrs="{'invisible':[('is_subcontracted','=', True)]}"/>
+<!--                                    <field name="total_amount_contracted" readonly="1" attrs="{'invisible':[('is_subcontracted','=',False)]}"/>-->
+                                </group>
+                                <group>
+                                    <field name="cancellation_reasons" attrs="{'invisible':[('state', '!=', 'cancelled')], 'readonly': ['|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False)]}"/>
+                                    <field name="date_cancellation" attrs="{'invisible':[('state', '!=', 'cancelled')], 'readonly': ['|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False)]}"/>
+                                </group>
+                            </page>
+                            <page string="Activities" attrs="{'invisible': [('order_plant','=',True)]}">
+                                <button  type="object" string="Delete" name="delete_activities" icon="fa-chain-broken" groups="df_maintenance.group_maintenance_executor,df_maintenance.group_maintenance_administrator" attrs="{'invisible': ['|','|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}"></button>
+                                <field name="activity_ids" options="{'no_open': True}"  nolabel="1" attrs="{'readonly': ['|','|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}">
+                                    <tree string="Activities" editable="bottom" delete="false">
+                                        <field name="delete" attrs="{'invisible': [('create_date', '=', False)]}" />
+                                        <field name="sequence" readonly="1" force_save="1"/>
+                                        <field name="activity" force_save="1" attrs="{'readonly': [('activity', '!=', False)]}"  />
+                                        <field name="create_date" invisible="1"/>
+                                        <field name="done" attrs="{'invisible': [('create_date', '=', False)]}"/>
+                                        <field name="brigade_id" invisible="1" />
+                                        <field name="location_ids" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Labor" name="labor"> <!--attrs="{'invisible':[('is_subcontracted','=', True)]}"-->
+                                <field name="employee_ids" options="{'no_open': True}" nolabel="1" attrs="{'readonly': ['|','|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}" widget="one2many_search">
+
+                                    <tree string="Employees" editable="bottom">
+                                        <field name="activity_id" attrs="{'readonly':[('posted','=', True)]}"/> <!--readonly="1" force_save="1"-->
+                                        <field name="activity_allowed" invisible="1"/>
+                                        <field name="job_id" attrs="{'readonly':[('posted','=', True)]}"/>
+                                        <field name="job_alowed" invisible="1"/>
+                                        <field name="brigade_id" invisible="1"/>
+<!--                                        <field name="order_state" invisible="1"/>-->
+                                        <field name="employee_id" attrs="{'readonly':[('posted','=', True)]}"/>
+                                        <field name="employee_allowed" invisible="1"/>
+                                        <field name="employee_code" force_save="1"/>
+                                        <field name="planned_time" widget="float_time" sum="planned_time" force_save="1"/>
+                                        <field name="real_time" widget="float_time" attrs="{'readonly': [('posted', '=', True)]}" sum="real_time"/>
+                                        <field name="amount" sum="Total" force_save="1"/>
+                                        <field name="date" attrs="{'readonly':[('posted','=', True)]}"/>
+                                        <field name="posted" force_save="1"/>
+                                        <field name="order_id" invisible="1"/>
+                                        <field name="is_order" invisible="1"/>
+<!--                                        <field name="validate_employee" style = "color:red" readonly="True"/>-->
+<!--                                        <field name="unique_employee" readonly="True"/>-->
+
+
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Products" name="products"> <!--attrs="{'invisible':[('is_subcontracted','=', True)]}"-->
+<!--                                <header>-->
+                                    <button  type="object" string="Marcar Todo" name="print_all" class="oe_stat_button" icon="fa-check-square-o" attrs="{'invisible': ['|','|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}" groups="df_maintenance.group_maintenance_executor,df_maintenance.group_maintenance_administrator"></button>
+<!--                                    <pre> </pre>-->
+                                    <button  type="object" string="Desmarcar Todo" name="print_never" class="oe_stat_button" icon="fa-square-o" attrs="{'invisible': ['|','|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}" groups="df_maintenance.group_maintenance_executor,df_maintenance.group_maintenance_administrator"></button>
+
+                                    <button  type="object" string="Reserve" name="action_reserve" class="oe_stat_button" icon="fa-edit"  attrs="{'invisible': ['|','|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}" groups="df_maintenance.group_maintenance_executor,df_maintenance.group_maintenance_administrator"></button>
+
+                                    <button  type="object" string="Existence" name="action_verify" class="oe_stat_button" icon="fa-search"  attrs="{'invisible': ['|','|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}" groups="df_maintenance.group_maintenance_executor,df_maintenance.group_maintenance_administrator"></button>
+
+                                    <button  type="object" string="Generate Purchase" name="generate_purchase" class="oe_stat_button" icon="fa-shopping-cart"  attrs="{'invisible': ['|','|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}" groups="df_maintenance.group_maintenance_executor,df_maintenance.group_maintenance_administrator"></button>
+
+                                    <button  type="object" string="Expedition" name="expedition_all" class="oe_stat_button" icon="fa-handshake-o"  attrs="{'invisible': ['|','|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}" groups="df_maintenance.group_maintenance_executor,df_maintenance.group_maintenance_administrator"></button>
+
+
+
+<!--                                </header>-->
+                                    <field name="product_ids"  nolabel="1" options="{'no_open': True}" attrs="{'readonly': ['|','|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}" widget="one2many_search"> <!--widget="one2many_delete"-->
+                                    <tree string="Products" editable="bottom">
+                                        <field name="print_validate" widget = "boolean_toggle"/>
+                                        <field name="state" invisible="1"/>
+
+										<field name="product_id" force_save="1" attrs="{'readonly':[('delivery_status','!=','free')]}"/>
+
+
+                                        <field name="activity_id" attrs="{'readonly':[('delivery_status','!=','free')]}"/> <!--readonly="1" force_save="1"-->
+                                        <field name="activity_allowed" invisible="1"/>
+
+                                        <field name="product_qty" force_save="1" attrs="{'readonly':[('delivery_status','!=','free')]}"/>
+
+                                        <field name="product_qty_delivered" force_save="1" readonly="1"/>
+                                        <field name="product_expected" force_save="1" readonly="1" invisible="1" />
+                                        <field name="product_uom"/>
+                                        <field name="price_unit"/>
+                                        <field name="amount" sum="Total"/>
+                                        <field name="store_id" readonly="1" force_save="1" />
+
+                                        <field name="location" widget="many2many_tags" readonly="1" force_save="1"/>
+                                        <field name="date" attrs="{'readonly':[('delivery_status','!=','free')]}"/>
+
+                                        <field name="delivery_status" sum="Total"/>
+                                        <field name="is_order" invisible="1"/>
+                                        <field name="reserved" invisible="1"/>
+                                        <field name="complete_order" invisible="1"/>
+                                        <field name="stock_request_order_ids" invisible="1"/>
+                                        <field name="request_purchase_ids" invisible="1"/>
+                                        <field name="delivery_status" invisible="1"/>
+                                        <button type="object"
+                                            string="Existence"
+                                            name="check_exists"
+                                            class="oe_stat_button"
+                                            icon="fa-search"
+                                            groups="df_maintenance.group_maintenance_executor,df_maintenance.group_maintenance_administrator"
+                                            attrs="{'invisible':['|','|',('complete_order','=', True),('reserved','=',True),('delivery_status','=','delivered')]}">
+                                        </button>
+                                        <button name="action_reserve"
+                                                string="Reserve"
+                                                class="oe_stat_button"
+                                                type="object"
+                                                attrs="{'invisible':['|','|','|',('complete_order','=', True),('reserved','=',True),('state','=','free'),('delivery_status','=','delivered')]}"
+                                                icon="fa-edit"
+                                                groups="df_maintenance.group_maintenance_executor,df_maintenance.group_maintenance_administrator"/>
+                                        <button
+                                                type="object"
+                                                string="Expedition"
+                                                name="expedition"
+                                                class="oe_stat_button"
+                                                icon="fa-handshake-o"
+                                                attrs="{'invisible':['|',('complete_order','=', True),('delivery_status','not in',('reserved','delivey_partial'))]}"
+                                                groups="df_maintenance.group_maintenance_executor,df_maintenance.group_maintenance_administrator">
+                                        </button>
+
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Subcontract" attrs="{'invisible':[('is_subcontracted','=', False)]}">
+                                <header>
+                                    <button  type="object" string="Marcar Todo" name="action_mark_all" class="oe_stat_button" icon="fa-check-square-o" attrs="{'invisible': ['|','|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}" groups="df_maintenance.group_maintenance_executor,df_maintenance.group_maintenance_administrator"></button>
+                                    <button  type="object" string="Desmarcar Todo" name="action_unmark_all" class="oe_stat_button" icon="fa-square-o" attrs="{'invisible': ['|','|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}" groups="df_maintenance.group_maintenance_executor,df_maintenance.group_maintenance_administrator"></button>
+                                    <button type="object"  string="Post services" name="action_post_services" class="oe_stat_button" icon="fa-thumbs-o-up" attrs="{'invisible': ['|','|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}" groups="df_maintenance.group_maintenance_administrator"></button>
+                                </header>
+                                <field name="product_service_ids" nolabel="1" options="{'no_open': True}" attrs="{'readonly': ['|','|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False),('completion', 'in', ('finished','insolvable'))]}">
+                                    <tree string="Services" editable="bottom">
+                                        <field name="post_validate"/>
+                                        <field name="product_id"/>
+                                        <field name="product_qty"/>
+                                        <field name="price_unit"/>
+                                        <field name="amount"/>
+                                        <field name="contracted_company"/>
+                                        <field name="contract_nro"/>
+                                        <button type="object"
+                                            string="Post service"
+                                            name="action_post_service"
+                                            class="oe_stat_button"
+                                            icon="fa-thumbs-o-up"
+                                            groups="df_maintenance.group_maintenance_administrator"/>
+                                    </tree>
+                                </field>
+<!--                                <group>-->
+<!--                                    <field name="partner_id" string="Partner" attrs="{'readonly': ['|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False)]}"/> &lt;!&ndash;'required':[('is_subcontracted','=', True)],&ndash;&gt;-->
+<!--                                    <field name="nro_contract" string="No. Contract" attrs="{'readonly': ['|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False)]}"/> &lt;!&ndash;'required':[('is_subcontracted','=', True)],&ndash;&gt;-->
+<!--                                    <field name="maintenance_cost" string="Maintenance Cost" attrs="{'required':[('is_subcontracted','=', True)],'readonly': ['|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False)]}"/>-->
+<!--                                </group>-->
+                            </page>
+                            <page string="Comments">
+                                <field colspan="4" name="comments" nolabel="1" attrs="{'readonly': ['|',('state', 'in', ('finished','history','cancelled','posted')),('active', '=', False)]}"/>
+                            </page>
+                            <page string="Supervisions History" name="supervisions_history" readonly="True">
+                                <field name="supervised_ids" options="{'no_open': True}" nolabel="1" readonly="True" >
+
+                                    <tree string="Supervisions History" editable="bottom">
+                                        <field name="order_id" invisible="1" />
+                                        <field name="verified_employee_id" readonly="1" force_save="1"/>
+                                        <field name="completion" readonly="1" force_save="1"/>
+                                        <field name="date_supervised" readonly="1" force_save="1"/>
+                                        <field name="observation" readonly="1" force_save="1"/>
+                                        <field name="causes_not_finished" readonly="1" force_save="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+
+
+
+<!--                    <div class="oe_chatter">-->
+<!--                        <field name="message_follower_ids" widget="mail_followers"/>-->
+<!--                        <field name="message_ids" widget="mail_thread"/>-->
+<!--                    </div>-->
+                </form>
+            </field>
+        </record>
+
+        <record id="df_maintenance_work_order_form_inherit" model="ir.ui.view">
+            <field name="name">df.maintenance.work.order.form.inherit</field>
+            <field name="model">df.maintenance.work.order</field>
+<!--            <field name="groups_id" eval="[(4, ref('group_maintenance_petitioner'))]"/>-->
+            <field name="inherit_id" ref="df_maintenance_work_order_form_view"/>
+            <field name="arch" type="xml">
+                <field name="employee_ids" position="attributes">
+                    <attribute name="attrs">{'readonly': ['|',('state', 'in', ('finished', 'history','cancelled','posted')),('active', '=', False)]}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="df_action_maintenance_work_order" model="ir.actions.act_window">
+            <field name="name">Work Orders</field>
+            <field name="res_model">df.maintenance.work.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('order_plant', '=', False)]</field>
+        </record>
+
+        <record id="df_action_maintenance_work_order_request" model="ir.actions.act_window">
+            <field name="name">Work Orders</field>
+            <field name="res_model">df.maintenance.work.order</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="df_action_maintenance_work_order_history" model="ir.actions.act_window">
+            <field name="name">Work Order</field>
+            <field name="res_model">df.maintenance.work.order</field>
+            <field name="view_mode">tree,form,graph</field>
+            <field name="domain">[('asset_id', '=', active_id)]</field>
+        </record>
+
+        <record model="ir.actions.server" id="df_action_file_draf_orders">
+            <field name="name">Remove Draf Orders</field>
+            <field name="model_id" ref="df_maintenance.model_df_maintenance_work_order"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+               action = model.remove_draf_orders()
+            </field>
+        </record>
+
+
+
+        <record model="ir.actions.server" id="df_action_maintenance_post_work_force">
+            <field name="name">Post Work Force</field>
+            <field name="model_id" ref="df_maintenance.model_df_maintenance_work_order"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+               action = model.post_work_force()
+            </field>
+        </record>
+
+        <record id="df_action_maintenance_work_order_archived" model="ir.actions.act_window">
+        <field name="name">Order To archive</field>
+        <field name="res_model">df.maintenance.work.order</field>
+        <field name="binding_model_id" ref="df_maintenance.model_df_maintenance_work_order"/>
+        <field name="view_mode">tree</field>
+
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+               Order To archive
+            </p><p>
+                Follow the process of the request and communicate with the collaborator.
+            </p>
+
+        </field>
+
+    </record>
+
+
+
+    </data>
+</odoo>

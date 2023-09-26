@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data noupdate="1">
+		<record model="ir.sequence" id="seq_df_maintenance_request">
+			<field name="name">Maintenance Work Request</field>
+			<field name="code">df.maintenance.request</field>
+			<field name="padding" eval="5" />
+			<field name="prefix">%(year)s/</field>
+		</record>
+
+		<record model="ir.sequence" id="seq_df_maintenance_work_order">
+			<field name="name">Maintenance Work Order</field>
+			<field name="code">df.maintenance.work.order</field>
+			<field name="padding" eval="5" />
+			<field name="prefix">%(year)s/</field>
+		</record>
+
+<!--		<record model="ir.sequence" id="seq_df_maintenance_rate">-->
+<!--			<field name="name">Maintenance Rate</field>-->
+<!--			<field name="code">df.maintenance.rate</field>-->
+<!--			<field name="padding" eval="5" />-->
+<!--			<field name="prefix">%(year)s/</field>-->
+<!--		</record>-->
+	</data>
+</odoo>

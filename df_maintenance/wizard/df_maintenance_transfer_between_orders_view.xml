@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="df_transfer_between_orders_wizard" model="ir.ui.view">
+            <field name="name">df.transfer.between.orders.wizard</field>
+            <field name="model">df.transfer.between.orders</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Transfer Between Orders">
+                    <group>
+                        <group>
+                            <field name="order_transfer_id" options="{'no_create': True}" domain="[('state', '!=', 'free'),('state', '!=', 'history'),('state', '!=', 'cancelled')]"/>
+                        </group>
+                        <group>
+                            <field name="order_transfer_team_id" invisible="1"/>
+                            <field name="order_receive_id" domain="[('id', '!=', order_transfer_id),('state', '!=', 'free'),('maintenance_team_id.id','=',order_transfer_team_id)]" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <field name="product_ids" nolabel="1" options="{'no_create': True}" domain="[('order_id', '=', order_transfer_id),('delivery_status', '=', 'delivered')]">
+                        <tree string="Products" editable="bottom">
+                            <field name="transfer" invisible="1"/>
+                            <field name="product_id"/>
+                            <field name="product_qty"/>
+                            <field name="product_uom"/>
+                            <field name="price_unit"/>
+                            <field name="amount" sum="Total"/>
+                            <field name="location"/>
+                            <field name="store_id"/>
+                            <field name="date"/>
+                            <field name="delivery_status" sum="Total"/>
+                        </tree>
+                    </field>
+                    <footer>
+                        <button string="Aceptar" name="transfer_between_orders" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="df_action_transfer_between_orders_wizard" model="ir.actions.act_window">
+            <field name="name">Transfer Between Orders</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">df.transfer.between.orders</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

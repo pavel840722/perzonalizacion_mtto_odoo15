@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="df_maintenance_preventive_template_form_view" model="ir.ui.view">
+            <field name="name">df.maintenance.preventive.template.form</field>
+            <field name="model">df.maintenance.template</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Maintenance Template" duplicate="false">
+                    <header>
+                        <button name="action_draft" string="Draft" type="object" class="oe_highlight"
+                                states="confirmed,expired" help="This allow change the status of the draft template"/>
+                        <button name="action_confirmed" string="Confirmed" type="object" class="oe_highlight"
+                                states="draft" help="This allow change the status of the confirmed template"
+                                attrs="{'readonly': [('intervention_ids', '=', [])]}"/>
+                        <button name="action_expired" string="Expired" type="object" class="oe_highlight"
+                                states="draft,confirmed" help="This allow change the status of the expired template"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,expired"
+                               readonly="1"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field widget="regex_mask" data-inputmask-regex="^[a-zA-ZñáéíóúüÑÁÉÍÓÚÜ\\ \\d]+$" name="name" class="oe_inline" attrs="{'readonly':[('state','=','confirmed')]}"/>
+                            </h1>
+                        </div>
+                        <group string="Other Data" groups="base.group_multi_company">
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <notebook>
+                            <page string="Interventions">
+                                <field name="intervention_ids" nolabel="1"
+                                       attrs="{'readonly':[('state','=','confirmed')]}">
+                                    <tree string="Interventions">
+                                        <field name="intervention_id"/>
+                                        <field name="frequency"/>
+                                        <!--<field name="number_interval"/>-->
+                                    </tree>
+                                    <form>
+                                        <group col="1">
+                                                <field name="intervention_id"/>
+                                        </group>
+                                        <group>
+                                            <group col="2">
+                                                <group col="1">
+                                                    <group>
+                                                        <field name="calendar" attrs="{'required': [('reading','==',False)]}"/>
+                                                    </group>
+                                                    <group attrs="{'invisible': [('calendar','=',False)]}">
+                                                        <label for="interval"/>
+                                                        <div>
+                                                            <field name="interval"
+                                                                   attrs="{'required': [('calendar','==',True)]}"
+                                                                   class="oe_inline"/>
+                                                            <field name="rrule_type"
+                                                                   attrs="{'required': [('calendar','==',True)]}"
+                                                                   class="oe_inline"/>
+                                                        </div>
+                                                        <span string="Select Weekdays"
+                                                               attrs="{'invisible' :[('rrule_type','not in', ['weekly'])]}"/>
+                                                        <group col="2" colspan="1" name="weekdays"
+                                                               attrs="{'invisible' :[('rrule_type','not in', ['weekly'])]}">
+                                                            <field name="mo"/>
+                                                            <field name="tu"/>
+                                                            <field name="we"/>
+                                                            <field name="th"/>
+                                                            <field name="fr"/>
+                                                            <field name="sa"/>
+                                                            <field name="su"/>
+                                                        </group>
+
+                                                        <span string="Day of Month"
+                                                               attrs="{'invisible': [('rrule_type','!=','monthly')]}"/>
+
+                                                        <div attrs="{'invisible': [('rrule_type','!=','monthly')]}">
+                                                            <field name="month_by"/>
+                                                            <field name="day"
+                                                                   attrs="{'required': [('month_by','=','date'), ('rrule_type','=','monthly')],
+                                                    'invisible': [('month_by','=','day')]}"/>
+                                                            <field name="byday" string="The"
+                                                                   attrs="{'required': [('month_by','=','day'), ('rrule_type','=','monthly')], 'invisible': [('month_by','=','date')]}"/>
+                                                            <field name="week_list" nolabel="1"
+                                                                   attrs="{'required': [('month_by','=','day'), ('rrule_type','=','monthly')], 'invisible': [('month_by','=','date')]}"/>
+                                                        </div>
+                                                    </group>
+
+                                                </group>
+                                                <group col="1">
+                                                    <group>
+                                                        <field name="reading" attrs="{'required': [('calendar','==',False)]}"/>
+                                                        <field name="reading_frequency" attrs="{'invisible': [('reading','=',False)], 'required': [('reading','==',True)]}"></field>
+                                                        <field name="uom_id" attrs="{'invisible': [('reading','=',False)], 'required': [('reading','==',True)]}"></field>
+                                                    </group>
+
+                                                </group>
+
+                                            </group>
+                                        </group>
+
+                                    </form>
+                                </field>
+                            </page>
+                            <page string="Description">
+                                <field nolabel="1" name="description" attrs="{'readonly':[('state','=','confirmed')]}"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="df_maintenance_preventive_template_tree_view" model="ir.ui.view">
+            <field name="name">df.maintenance.preventive.template.tree</field>
+            <field name="model">df.maintenance.template</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Maintenance Templates">
+                    <field name="name"/>
+                    <!--<field name="regimen"/>-->
+                    <field name="description"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+<!--        <record id="df_maintenance_preventive_template_search_view" model="ir.ui.view">-->
+<!--            <field name="name">df.maintenance.preventive.template.search</field>-->
+<!--            <field name="model">df.maintenance.template</field>-->
+<!--            <field name="type">search</field>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <search string="Search Maintenance Templates">-->
+<!--                    <filter name="draft" string="Draft" domain="[('state','=','draft')]"-->
+<!--                            help="Draft Maintenance Templates"/>-->
+<!--                    <filter name="confirmed" string="Confirmed" domain="[('state','=','confirmed')]"-->
+<!--                            help="Confirmed Maintenance Templates"/>-->
+<!--                    <separator orientation="vertical"/>-->
+<!--                    <field name="name"/>-->
+<!--                    &lt;!&ndash;<field name="regimen"/>&ndash;&gt;-->
+<!--                    <newline/>-->
+<!--                    <group expand="0" string="Group By..." groups="base.group_extended">-->
+<!--                        &lt;!&ndash;<filter string="Regimen" domain="[]" context="{'group_by':'regimen'}"&ndash;&gt;-->
+<!--                        &lt;!&ndash;help="This allow to group by Regimen"/>&ndash;&gt;-->
+<!--                        <separator orientation="vertical"/>-->
+<!--                        <filter string="State" domain="[]" context="{'group_by':'state'}"-->
+<!--                                help="This allow to group by State of the Template"/>-->
+<!--                    </group>-->
+<!--                </search>-->
+<!--            </field>-->
+<!--        </record>-->
+        <record id="df_action_maintenance_template" model="ir.actions.act_window">
+            <field name="name">Maintenance Templates</field>
+            <field name="res_model">df.maintenance.template</field>
+            <field name="view_mode">tree,form</field>
+<!--            <field name="search_view_id" ref="df_maintenance_preventive_template_search_view"/>-->
+        </record>
+    </data>
+</odoo>

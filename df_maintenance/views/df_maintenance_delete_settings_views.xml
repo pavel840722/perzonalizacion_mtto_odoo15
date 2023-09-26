@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_df_maintenance_delete_settings_tree" model="ir.ui.view">
+            <field name="name">df.maintenance.delete.settings.tree</field>
+            <field name="model">df.maintenance.delete.settings</field>
+            <field eval="100" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Maintenance Delete Settings">
+                    <field name="days_to_delete_order"/>
+                    <field name="free_state_materials_remove" />
+                </tree>
+            </field>
+        </record>
+        <record id="df_maintenance_delete_settings_form_view" model="ir.ui.view">
+            <field name="name">df.maintenance.delete.settings.form</field>
+            <field name="model">df.maintenance.delete.settings</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Maintenance Delete Settings">
+                    <sheet>
+                       <group>
+                            <group>
+                                <field name="days_to_delete_order" />
+                            </group>
+                            <group>
+                                <field name="free_state_materials_remove" />
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="df_action_maintenance_delete_settings" model="ir.actions.act_window">
+            <field name="name">Maintenance Delete Settings</field>
+            <field name="res_model">df.maintenance.delete.settings</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_df_maintenance_delete_settings"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_equipment_category_view_form_inherit" model="ir.ui.view">
+            <field name="name">equipment.category.form.inherit</field>
+            <field name="model">maintenance.equipment.category</field>
+            <field name="inherit_id" ref="maintenance.hr_equipment_category_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="duplicate">false</attribute>
+                </xpath>
+                <xpath expr="//div[@class='oe_title']" position="after">
+                    <label for="subcategories_ids" string="Subcategories"/>
+                    <field name="subcategories_ids" widget="many2many_tags"/>
+                </xpath>
+                <field name="technician_user_id" position="attributes">
+                    <attribute name="attrs">{'invisible':1}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="hr_equipment_category_view_tree_inherit" model="ir.ui.view">
+            <field name="name">hr.equipment.category.view.tree.inherit</field>
+            <field name="model">maintenance.equipment.category</field>
+            <field name="inherit_id" ref="maintenance.hr_equipment_category_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="subcategories_ids" widget="many2many_tags"/><!--widget="many2many_tags"-->
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

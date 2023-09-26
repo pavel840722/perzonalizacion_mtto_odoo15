@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="equipment_request_action_from_equipment" model="ir.actions.act_window">
+        <field name="name">Maintenance Requests</field>
+        <field name="res_model">maintenance.request</field>
+        <field name="binding_model_id" ref="maintenance.model_maintenance_equipment"/>
+        <field name="view_mode">kanban,tree,form,pivot,graph,calendar</field>
+        <field name="context">{
+            'default_equipment_id': active_id,
+        }</field>
+        <field name="domain">[('equipment_id', '=', active_id)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add a new maintenance request
+            </p><p>
+                Follow the process of the request and communicate with the collaborator.
+            </p>
+        </field>
+    </record>
+
+
+
+
+        <record id="hr_equipment_view_form_inherit" model="ir.ui.view">
+            <field name="name">equipment.form.inherit</field>
+            <field name="model">maintenance.equipment</field>
+            <field name="inherit_id" ref="maintenance.hr_equipment_view_form"/>
+            <field name="arch" type="xml">
+
+            <xpath expr="//button[@name='%(maintenance.hr_equipment_request_action_from_equipment)d']" position="after">
+<!--                   <button-->
+<!--                       name="action_context" type="object" string="Context"-->
+<!--                                class="oe_stat_button"-->
+<!--                   />-->
+
+
+                        <button name="%(equipment_request_action_from_equipment)d"
+                            type="action"
+                            class="oe_stat_button"
+                            context="{'default_cost_center': cost_center,
+                                        'default_stock_asset_id':stock_asset_id
+                                }"
+                            icon="fa-wrench">
+                            <field string="Maintenance" name="maintenance_count" widget="statinfo"/>
+                        </button>
+
+            </xpath>
+
+                <xpath expr="//button[@name='%(maintenance.hr_equipment_request_action_from_equipment)d']" position="attributes">
+                            <attribute name="invisible">1</attribute>
+                </xpath>
+
+
+                <xpath expr="//form" position="attributes">
+                    <attribute name="duplicate">false</attribute>
+                </xpath>
+                <xpath expr="//div[hasclass('oe_title')]" position="before">
+                    <field
+                        name="image_1920"
+                        widget="image"
+                        class="oe_avatar"
+                        options='{"preview_image": "image_128"}'
+                    />
+                </xpath>
+                <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                    <button name="%(df_action_maintenance_work_order_history)d"
+                        context="{'search_default_object_id': active_id, 'default_object_id': active_id}"
+                        type="action"
+                        class="oe_inline oe_stat_button"
+                        icon="fa-wrench"
+                        attrs="{'invisible': [('is_maintenance','=',False)]}"> <!--groups="group_maintenance_user"-->
+                        <field string="Orders" name="work_order_count" widget="statinfo"/>
+                    </button>
+                </xpath>
+                <xpath expr="//label[@for='name']" position="before">
+                   <label for="account_asset_id" string="Accounting asset"/>
+                   <field name="account_asset_id"/>
+                   <br/>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                     <br/>
+                     <label for="code"  attrs="{'invisible': [('is_maintenance','=',False)]}"/><br/>
+                     <h1><field name="code" attrs="{'required': [('is_maintenance','=',True)], 'invisible': [('is_maintenance','=',False)]}"/></h1>
+                     <label for="asset_number"  attrs="{'invisible': [('is_maintenance','=',False)]}"/><br/>
+                     <h1><field name="asset_number" attrs="{'required': [('is_maintenance','=',True)], 'invisible': [('is_maintenance','=',False)]}"/></h1>
+                </xpath>
+
+                <xpath expr="//field[@name='category_id']" position="after">
+                   <field name="subcategory_id"/>
+                   <field name="stock_asset_id"/>
+<!--                   <field name="analytic_account_number"/>-->
+                   <field name="cost_center" readonly="1" force_save="1" />
+
+
+                   <field name="criticality"/>
+                </xpath>
+<!--                <field name="subcategory_id" position="attributes">-->
+<!--                    <attribute name="domain">[('category_id', '=', category_id)]</attribute>-->
+<!--                </field>-->
+                <xpath expr="//field[@name='technician_user_id']" position="after">
+                   <field name="active"/>
+                   <field name="is_maintenance"/>
+                </xpath>
+                <xpath expr="//field[@name='maintenance_team_id']" position="attributes">
+                    <attribute name="attrs">{'invisible': 1}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='maintenance_team_id']" position="attributes">
+                    <attribute name="attrs">{'invisible': 1}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='equipment_assign_to']" position="attributes">
+                    <attribute name="attrs">{'invisible': 1}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='assign_date']" position="attributes">
+                    <attribute name="attrs">{'invisible': 1}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='scrap_date']" position="attributes">
+                    <attribute name="attrs">{'invisible': 1}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='location']" position="attributes">
+                    <attribute name="attrs">{'invisible': 1}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='employee_id']" position="attributes">
+                    <attribute name="attrs">{'invisible': 1}</attribute>
+                </xpath>
+<!--                <xpath expr="//field[@name='warranty_date']" position="after">-->
+<!--                    <field name="asset_number"/>-->
+<!--                </xpath>-->
+                <xpath expr="//field[@name='partner_id']" position="before">
+                    <field name="manufacturer_id"/>
+                </xpath>
+                <xpath expr="//field[@name='warranty_date']" position="before">
+                    <field name="warranty_start_date" widget="daterange" options='{"related_end_date": "warranty_date"}'/>
+                </xpath>
+                <xpath expr="//field[@name='warranty_date']" position="attributes">
+                    <attribute name="options" >{"related_start_date": "warranty_start_date"}</attribute>
+                    <attribute name="widget">daterange</attribute>
+                </xpath>
+                <xpath expr="//field[@name='serial_no']" position="after">
+                    <field name="purchase_date"/>
+                </xpath>
+                <xpath expr="//field[@name='technician_user_id']" position="attributes">
+                    <attribute name="string">Assigned to</attribute>
+                </xpath>
+                <xpath expr="//group/label[@for='period']" position="attributes">
+                    <attribute name="string">Days between each preventive maintenance</attribute>
+                </xpath>
+                <page name="product_information" position="after">
+                    <page name="attributes" string="Attributes" attrs="{'invisible': [('is_maintenance','=',False)]}">
+                        <field name="attribute_ids" nolabel='1'>
+                            <tree string="Attributes" editable="bottom">
+                                <field name="name"/>
+                                <field name="value"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page name="spare" string="Spare parts" attrs="{'invisible': [('is_maintenance','=',False)]}">
+                        <field name="product_ids">
+                            <tree editable="bottom">
+                                <field name="product_id"/>
+                                <field name="product_qty"/>
+                                <field name="uom_id"/>
+                            </tree>
+                        </field>
+                    </page>
+<!--                    <page string="Maintenance Schedule">-->
+<!--						<field name="maintenance_template_id" readonly="True"/>-->
+<!--                        <button name="action_remove" string="Remove" type="object" attrs="{'invisible':[('maintenance_template_id','=',False)]}" icon="gtk-quit" confirm="This will remove the scheduled associated with the intervention. Please confirm intention to do so." />&lt;!&ndash;groups="group_maintenance_planner"&ndash;&gt;-->
+
+<!--					</page>-->
+                </page>
+            </field>
+        </record>
+        <record id="hr_equipment_view_kanban" model="ir.ui.view">
+            <field name="model">maintenance.equipment</field>
+            <field name="inherit_id" ref="maintenance.hr_equipment_view_kanban" />
+            <field name="arch" type="xml">
+                <field name="activity_state" position="after">
+                    <field name="id" />
+                </field>
+                <xpath expr="//div[hasclass('o_dropdown_kanban')]" position="before">
+                    <div class="o_kanban_image mr-1">
+                        <img
+                            t-att-src="kanban_image('maintenance.equipment', 'image_128', record.id.raw_value)"
+                            alt="Equipment"
+                            class="o_image_64_contain"
+                        />
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

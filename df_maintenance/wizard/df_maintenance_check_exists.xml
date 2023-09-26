@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="df_maintenance_supervisar_check_exists_form_view" model="ir.ui.view">
+            <field name="name">df.maintenance.product.check.exists.form</field>
+            <field name="model">df.maintenance.product.check.exists</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <field name="product_exist_id" invisible="1"/>
+                    <field name="dont_existence" invisible="1"/>
+
+
+                    <h4 attrs="{'invisible': [('dont_existence', '=', False)]}" >
+                        No hay disponibilidad actualmente,
+                        por favor, genere una solicitud de compra
+                    </h4>
+                     <field name="existence" options="{'no_open': True}" attrs="{'invisible': [('dont_existence', '=', True)]}">
+                             <tree string="Activities" editable="bottom" delete="false">
+                                 <field name="warehouse_id"/>
+                                 <field name="cant"/>
+                                 <field name="product_check_id" invisible="1"/>
+                                 <button string="Agg Location " name="agregar" type="object" class="oe_highlight"/>
+                             </tree>
+                     </field>
+
+                    <footer>
+                        <button
+                                string="Generate Purchase"
+                                name="generate_purchase"
+                                type="object"
+                                class="oe_highlight"
+                        attrs="{'invisible': [('dont_existence', '=', False)]}"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                 </form>
+            </field>
+        </record>
+    </data>
+</odoo>

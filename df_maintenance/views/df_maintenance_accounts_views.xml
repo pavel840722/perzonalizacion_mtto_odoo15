@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="df_maintenance_accounts_view_form" model="ir.ui.view">
+            <field name="name">df.maintenance.account.form</field>
+            <field name="model">df.maintenance.accounts</field>
+            <field name="arch" type="xml">
+                <form string="Maintenance accounts">
+                    <sheet>
+                        <group>
+                            <field name="project"/>
+                            <field name="service_transfer"/>
+                            <field name="workforce"/>
+                            <field name="workforce_recovery"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="df_maintenance_accounts_view_tree" model="ir.ui.view">
+            <field name="name">df.maintenance.account.tree</field>
+            <field name="model">df.maintenance.accounts</field>
+            <field name="arch" type="xml">
+                <tree string="Maintenance accounts" editable="bottom">
+                    <field name="project"/>
+                    <field name="service_transfer"/>
+                    <field name="workforce"/>
+                    <field name="workforce_recovery"/>
+                </tree>
+            </field>
+        </record>
+
+    <record id="df_maintenance_accounts_action" model="ir.actions.act_window">
+        <field name="name">Post workforce</field>
+        <field name="res_model">df.maintenance.accounts</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    </data>
+</odoo>

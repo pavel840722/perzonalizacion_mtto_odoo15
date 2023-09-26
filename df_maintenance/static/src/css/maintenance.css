@@ -1,0 +1,7 @@
+.table_line_col [data-name="producto"]{width: 300px !important; max-width:300px !important;}
+.table_line_col [data-name="activity_id"]{width: 160px !important; max-width:160px !important;}
+.table_line_col [data-name="product_qty_delivered"]{width: 160px !important; max-width:160px !important;}
+.table_line_col [data-name="product_uom"]{width: 160px !important; max-width:160px !important;}
+.table_line_col [data-name="price_unit"]{width: 160px !important; max-width:160px !important;}
+.table_line_col [data-name="store_id"]{width: 160px !important; max-width:160px !important;}
+.table_line_col [data-name="location"]{width: 160px !important; max-width:160px !important;}

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+         <!--MT : Listado de Tiempos de mantenimiento-->
+
+        <template id="MT_seccion_tabla_entidad">
+            <t>
+                <p class="text-right">
+                    Período: <t t-esc="date_start" t-options="{'widget':'date','format':'dd/MM/yyyy'}"/>
+                    al <t t-esc="date_end" t-options="{'widget':'date','format':'dd/MM/yyyy'}"/>
+                </p>
+                <t t-if="maintenance_team_id">
+                    <div class="header">
+                        Area de Mantenimiento: <t t-esc="docs[0].maintenance_team_id.name" />
+                    </div>
+                </t>
+
+                <br/>
+            </t>
+        </template>
+
+        <template id="MT_seccion_encabezado_de_columnas">
+            <t>
+                <thead t-att-style="bg_main">
+                     <t t-if="not maintenance_team_id" >
+                        <td t-att-style="std_header_left">Area de Mantenimiento</td>
+                    </t>
+                    <td t-att-style="std_header_left">Brigada</td>
+                    <td t-att-style="std_header_center">No. Orden</td>
+                    <td t-att-style="std_header_center">Fecha</td>
+                    <td t-att-style="std_header_center">Tiempo trabajado</td>
+                    <td t-att-style="std_header_center">Importe</td>
+                </thead>
+            </t>
+
+        </template>
+
+       <template id="MT_seccion_detalles">
+
+              <tr t-att-style="bg_deta">
+                 <t t-if="not maintenance_team_id">
+                      <td t-att-style="detail_left">  <t t-esc="o.maintenance_team_id.name"/> </td>
+                 </t>
+                 <td t-att-style="detail_left" > <t t-esc="o.brigade_id.hr_department.name"/> </td>
+                 <td t-att-style="detail_center" > <t t-esc="o.order_no"/> </td>
+                 <td t-att-style="detail_center"> <t t-esc="o['date_start']" t-options="{'widget':'date','format':'dd/MM/yyyy'}"/> </td>
+                 <td t-att-style="detail_center"> <t t-esc="total_time" t-options='{"widget": "float_time"}'/> </td>
+                 <td t-att-style="detail_right"> <t t-esc="user_func.number_by_cfg(importe,zeros_right,show_zeros,2)"/></td>
+              </tr>
+
+        </template>
+
+    <template id="MT_totales_team">
+           <t>
+              <tr>
+                <td t-att-colspan="col_span_total" t-att-style="detail_right" >TOTAL AREA : <t t-esc="grupo_team"/> </td>
+                  <td t-att-style="detail_center"> <t t-esc="total_team_time" t-options='{"widget": "float_time"}'/> </td>
+                 <td t-att-style="detail_right"> <t t-esc="user_func.number_by_cfg(total_team_importe,zeros_right,show_zeros,2)"/></td>
+              </tr>
+          </t>
+
+        </template>
+
+     <template id="MT_totales_brigada">
+           <t>
+              <tr>
+                <td t-att-colspan="col_span_total" t-att-style="detail_right" >TOTAL BRIGADA : <t t-esc="grupo_brigada"/> </td>
+                  <td t-att-style="detail_center"> <t t-esc="total_bri_time" t-options='{"widget": "float_time"}'/> </td>
+                 <td t-att-style="detail_right"> <t t-esc="user_func.number_by_cfg(total_bri_importe,zeros_right,show_zeros,2)"/></td>
+              </tr>
+          </t>
+
+        </template>
+
+       <template id="MT_totales_resumen">
+           <t>
+              <tr>
+                <td t-att-colspan="col_span_total" t-att-style="detail_right" >TOTAL </td>
+                  <td t-att-style="detail_center"> <t t-esc="total_gen_time" t-options='{"widget": "float_time"}'/> </td>
+                 <td t-att-style="detail_right"> <t t-esc="user_func.number_by_cfg(total_gen_importe,zeros_right,show_zeros,2)"/></td>
+              </tr>
+          </t>
+
+        </template>
+
+        <template id="report_print_maintenance_time">
+        <t t-call="web.basic_layout">
+            <!-- CUSTOM STYLE -->
+            <style>
+                    table.keep_with_colum> td {
+                        overflow: hidden;
+                        overflow-wrap:break-word;
+                    }
+           </style>
+           <t t-set="current_name_report" t-value="'df_maintenance.do_report_print_maintenance_time'" />
+           <t t-call="nl_cfg_reports.load_configuracion_and_call_report" />
+        </t>
+    </template>
+
+        <template id="do_report_print_maintenance_time">
+                <table  style="width:100%;border-spacing:0;cellspacing=0;">
+
+                    <t t-set="report_main_title" t-value="'TIEMPO DE MANTENIMIENTO'"/>
+                    <div t-attf-class="#{'header' if repeat_header else 'o_boxed_header'}">
+                        <t t-call="nl_cfg_reports.custom_logo_and_title"/>
+                    </div>
+
+                    <t t-call="df_maintenance.MT_seccion_tabla_entidad"/>
+                    <t t-call="df_maintenance.MT_seccion_encabezado_de_columnas"/>
+
+                    <t t-set="count_records" t-value="0"/>
+                    <t t-set="total_records" t-value="len(docs)"/>
+                    <t t-set="total_gen_importe" t-value="0"/>
+                    <t t-set="total_gen_time" t-value="0"/>
+                    <t t-set="total_team_importe" t-value="0"/>
+                    <t t-set="total_team_time" t-value="0"/>
+                    <t t-set="count_records_team" t-value="0"/>
+
+                     <t t-set="col_span_total" t-value="3 if maintenance_team_id else 4"/>
+
+               <!--     EN ESTE CASO PARA AGRUPAR LOS DATOS DEBEN VENIR OPRDENADOS POR TEAM Y BRIGADA-->
+
+               <tbody>
+
+                    <t t-foreach="range(total_records)" t-as="rec" t-if="count_records &lt; total_records"  >
+
+                        <t t-set="current_record" t-value="docs[count_records]"/>
+                        <t t-set="records_group" t-value="0"/>
+                        <t t-set="total_bri_importe" t-value="0"/>
+                        <t t-set="total_bri_time" t-value="0"/>
+
+                        <t t-set="total_records_team" t-value="sum(1 for x in docs if x.maintenance_team_id.id==current_record.maintenance_team_id.id)"/>
+
+                        <t t-foreach="docs" t-as="o"
+                           t-if="current_record.maintenance_team_id.id == o.maintenance_team_id.id and current_record.brigade_id.id == o.brigade_id.id ">
+
+                            <t t-set="last_record" t-value="o"/>
+                            <t t-set="count_records" t-value="count_records + 1"/>
+                            <t t-set="count_records_team" t-value="count_records_team+1"/>
+                            <t t-set="records_group" t-value="records_group + 1"/>
+
+                            <t t-set="total_time" t-value="sum(x.time for x in o.employee_ids)"/>
+                            <t t-set="importe" t-value="o['product_amount']+o['labor_amount']"/>
+
+                            <t t-set="total_team_importe" t-value="total_team_importe + importe"/>
+                            <t t-set="total_bri_importe" t-value="total_bri_importe + importe"/>
+                            <t t-set="total_gen_importe" t-value="total_gen_importe + importe"/>
+
+                            <t t-set="total_team_time" t-value="total_team_time + total_time"/>
+                            <t t-set="total_bri_time" t-value="total_bri_time + total_time"/>
+                            <t t-set="total_gen_time" t-value="total_gen_time + total_time"/>
+
+                            <t t-call="df_maintenance.MT_seccion_detalles"/>
+
+                        </t>
+
+                        <t t-set="grupo_team" t-value="last_record.maintenance_team_id.name"/>
+                        <t t-set="grupo_brigada" t-value="last_record.brigade_id.hr_department.name"/>
+
+                        <t t-call="df_maintenance.MT_totales_brigada"/>
+
+                        <t t-if="count_records_team == total_records_team">
+                            <t t-call="df_maintenance.MT_totales_team"/>
+                            <t t-set="count_records_team" t-value="0"/>
+                            <t t-set="total_team_importe" t-value="0"/>
+                            <t t-set="total_team_time" t-value="0"/>
+                        </t>
+
+                    </t>
+
+                    <t t-call="df_maintenance.MT_totales_resumen"/>
+
+
+                </tbody>
+            </table>
+        </template>
+    </data>
+
+</odoo>

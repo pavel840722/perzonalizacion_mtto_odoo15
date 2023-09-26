@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="df_maintenance_preventive_intervention_form_view" model="ir.ui.view">
+            <field name="name">df.maintenance.preventive.intervention.form</field>
+            <field name="model">df.maintenance.intervention</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Maintenance Intervention" duplicate="false">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+<!--                                <field name="abbreviation"/>-->
+                                <field name="activity_ids"/>
+<!--                                <field name="id" invisible="1"/>-->
+<!--                                <field name="inclusion_id" /> &lt;!&ndash;domain="[('domain_includes', '!=', id )]"&ndash;&gt;-->
+                                <field name="is_subcontracted" string="Is subcontracted"/>
+                            </group>
+<!--                            <group>-->
+<!--                                <field name="duration" widget="float_time"/>-->
+<!--                                <field name="downtime" widget="float_time"/>-->
+<!--                                <field name="budget" string="Budget" attrs="{'invisible':[('is_subcontracted','=', False)], 'required':[('is_subcontracted','=', True)]}"/>-->
+<!--                                <field name="currency_id" groups="base.group_multi_currency" string="Currency" required="0" invisible="1"/>-->
+<!--                                <field name="partner_id" string="Partner" attrs="{'invisible':[('is_subcontracted','=', False)], 'required':[('is_subcontracted','=', True)]}"/>-->
+<!--                                <field name="internal_working_budget" string="Budget" attrs="{'invisible':[('is_subcontracted','=', True)]}"/>-->
+<!--                            </group>-->
+                        </group>
+
+                        <group string="Other Data" groups="base.group_multi_company">
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+
+
+                        <notebook>
+<!--                            <page string="Activities">-->
+<!--                                <field name="activity_ids" nolabel="1">-->
+<!--                                    <tree string="Activities" editable="bottom">-->
+<!--                                        <field name="sequence"/>-->
+<!--                                        <field name="activity"/>-->
+<!--                                    </tree>-->
+<!--                                </field>-->
+<!--                            </page>-->
+                            <page string="Jobs" name="jobs" attrs="{'invisible':[('is_subcontracted','=', True)]}">
+                                <field name="job_ids" nolabel="1">
+                                    <tree string="Employees" editable="bottom">
+                                        <field name="job_id" invisible="1"/>
+                                        <field name="position_id"/>
+                                        <field name="time" widget="float_time"/>
+                                        <field name="amount" sum="Total"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Products" name="products" attrs="{'invisible':[('is_subcontracted','=', True)]}">
+                                <field name="product_ids" nolabel="1">
+                                    <tree string="Products" editable="bottom">
+                                        <field name="product_id"/>
+                                        <field name="quantity"/>
+                                        <field name="uom_id"/>
+                                        <field name="price_unit"/>
+                                        <field name="amount" sum="Total" options="{'save_readonly': 1}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="df_maintenance_preventive_intervention_tree_view" model="ir.ui.view">
+            <field name="name">df.maintenance.preventive.intervention.tree</field>
+            <field name="model">df.maintenance.intervention</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Maintenance Interventions">
+                    <field name="name"/>
+                    <field name="abbreviation"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="df_maintenance_preventive_intervention_search_view" model="ir.ui.view">
+            <field name="name">df.maintenance.preventive.intervention.search</field>
+            <field name="model">df.maintenance.intervention</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Search Maintenance Interventions">
+                    <field name="name"/>
+                    <field name="abbreviation"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="df_action_preventive_intervention" model="ir.actions.act_window">
+            <field name="name"> Intervention</field>
+            <field name="res_model">df.maintenance.intervention</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="df_maintenance_preventive_intervention_search_view"/>
+        </record>
+
+    </data>
+</odoo>

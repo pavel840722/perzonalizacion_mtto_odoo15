@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_df_maintenance_brigade_tree" model="ir.ui.view">
+            <field name="name">df.maintenance.brigade.tree</field>
+            <field name="model">df.maintenance.brigade</field>
+            <field eval="100" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Maintenance Brigades">
+<!--                    <field name="name"/>-->
+                    <field name="hr_department"/>
+                    <field name="number" widget="integer" options="{'format': 0}"  />
+                </tree>
+            </field>
+        </record>
+        <record id="df_maintenance_brigade_form_view" model="ir.ui.view">
+            <field name="name">df.maintenance.brigade.form</field>
+            <field name="model">df.maintenance.brigade</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Maintenance Brigades" duplicate="false">
+                    <sheet>
+                        <group>
+                            <group>
+<!--                                <field name="name" />-->
+                                <field name="hr_department"/>
+                            </group>
+                            <group>
+
+                                <field name="number" widget="integer" options="{'format': 0}" />
+                                <field name="analytic_account" />
+                                <field name="vacio" invisible="1" />
+
+                            </group>
+                                <field name="activity_ids" attrs="{'invisible': [('vacio', '=', True )]}">
+                                   <tree string="Activities" editable="bottom">
+                                      <field name="name"/>
+                                   </tree>
+                                </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="df_action_maintenance_brigade" model="ir.actions.act_window">
+            <field name="name">Maintenance Brigades</field>
+            <field name="res_model">df.maintenance.brigade</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_df_maintenance_brigade_tree"/>
+        </record>
+    </data>
+</odoo>

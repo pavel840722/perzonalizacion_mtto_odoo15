@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_df_maintenance_rate_tree" model="ir.ui.view">
+            <field name="name">df.maintenance.rate.tree</field>
+            <field name="model">df.maintenance.rate</field>
+            <field eval="100" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Maintenance Rate">
+<!--                    <field name="sequence"/>-->
+                    <field name="job_id" />
+                    <field name="brigade_id"/>
+                    <field name="hourly_rate" />
+                </tree>
+            </field>
+        </record>
+        <record id="df_maintenance_rate_form_view" model="ir.ui.view">
+            <field name="name">df.maintenance.rate.form</field>
+            <field name="model">df.maintenance.rate</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Maintenance Rate" duplicate="false">
+                    <sheet>
+                        <group>
+                            <field name="brigade_id"/>
+                            <field name="department_id" invisible="1"/>
+                            <field name="job_id" attrs="{'readonly': [('brigade_id', '=', False)]}" />
+                            <field name="hourly_rate"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="df_action_maintenance_rate" model="ir.actions.act_window">
+            <field name="name">Maintenance Rate</field>
+            <field name="res_model">df.maintenance.rate</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_df_maintenance_rate_tree"/>
+        </record>
+    </data>
+</odoo>

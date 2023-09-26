@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--
+        ========================
+         Supervisar wizard form
+        ========================
+        -->
+        <record id="df_maintenance_supervisar_wizard_form_view" model="ir.ui.view">
+            <field name="name">df.maintenance.supervisar.form</field>
+            <field name="model">df.supervise.work.order</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Supervisar trabajo">
+                    <field name="work_order_id" invisible="1"/>
+                    <group>
+                        <field name="verified_employee_id"></field>
+                        <field name="completion"></field>
+                        <field name="date_supervised"></field>
+                        <field name="observation"></field>
+                        <field name="causes_not_finished" attrs="{'invisible':[('completion','!=','unfinished')]}" ></field>
+                    </group>
+                    <footer>
+                        <button string="Aceptar" name="supervise" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                 </form>
+            </field>
+        </record>
+    </data>
+</odoo>

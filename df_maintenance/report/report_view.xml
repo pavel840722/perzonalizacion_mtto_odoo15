@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="paperformat_vp" model="report.paperformat">
+        <field name="name">A4</field>
+        <field name="default" eval="True"/>
+        <field name="format">Letter</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">10</field>
+        <field name="margin_bottom">0</field>
+        <field name="margin_left">0</field>
+        <field name="margin_right">0</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">5</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="paperformat_customvp" model="report.paperformat">
+        <field name="name">customvp</field>
+        <field name="default" eval="True"/>
+        <field name="format">custom</field>
+        <field name="page_height">297</field>
+        <field name="page_width">210</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">30</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">20</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="paperformat_customvp_1" model="report.paperformat">
+        <field name="name">customvp</field>
+        <field name="default" eval="True"/>
+        <field name="format">custom</field>
+        <field name="page_height">297</field>
+        <field name="page_width">210</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">40</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">30</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="paperformat_hp" model="report.paperformat">
+        <field name="name">A4</field>
+        <field name="default" eval="True"/>
+        <field name="format">Letter</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">10</field>
+        <field name="margin_bottom">0</field>
+        <field name="margin_left">0</field>
+        <field name="margin_right">0</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">5</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="paperformat_customhp" model="report.paperformat">
+        <field name="name">A4</field>
+        <field name="default" eval="True"/>
+        <field name="format">custom</field>
+        <field name="page_height">297</field>
+        <field name="page_width">210</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">30</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">20</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="paperformat_customhp2" model="report.paperformat">
+        <field name="name">A4</field>
+        <field name="default" eval="True"/>
+        <field name="format">custom</field>
+        <field name="page_height">297</field>
+        <field name="page_width">210</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">35</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">25</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="paperformat_customhp3" model="report.paperformat">
+        <field name="name">A4</field>
+        <field name="default" eval="True"/>
+        <field name="format">Letter</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">30</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">20</field>
+        <field name="dpi">90</field>
+    </record>
+
+
+    <!--    <report id="action_cert_prod_terminada"-->
+    <!--            model="cert.prod.terminada.wizard"-->
+    <!--            string="Certificación de Producción Terminada"-->
+    <!--            report_type="qweb-pdf"-->
+    <!--            name="emi_produccion.cert_prod_terminada"-->
+    <!--            file="emi_produccion.cert_prod_terminada"-->
+    <!--            paperformat="paperformat_customvp"/>-->
+
+    <!--    <report id="action_cert_prod_terminada_html"-->
+    <!--            model="cert.prod.terminada.wizard"-->
+    <!--            string="Certificación de Producción Terminada"-->
+    <!--            report_type="qweb-html"-->
+    <!--            name="emi_produccion.cert_prod_terminada"-->
+    <!--            file="emi_produccion.cert_prod_terminada"-->
+    <!--            paperformat="paperformat_customvp"/>-->
+    <!--    -->
+
+    <record id="action_print_request" model="ir.actions.report">
+        <field name="name">Print Request</field>
+        <field name="model">maintenance.request</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">df_maintenance.report_print_request</field>
+        <field name="report_file">df_maintenance.report_print_request</field>
+        <field name="paperformat_id" ref="df_maintenance.paperformat_enoting"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_print_orders" model="ir.actions.report">
+        <field name="name">Print Orders</field>
+        <field name="model">df.maintenance.work.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">df_maintenance.report_print_orders</field>
+        <field name="report_file">df_maintenance.report_print_orders</field>
+        <field name="paperformat_id" ref="df_maintenance.paperformat_enoting"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_print_orders_resumen_cost" model="ir.actions.report">
+        <field name="name">Orders Resumen Coste</field>
+        <field name="model">maintenance.orders</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">df_maintenance.report_print_orders_resumen_cost</field>
+        <field name="report_file">df_maintenance.report_print_orders_resumen_cost</field>
+        <field name="paperformat_id" ref="df_maintenance.paperformat_enoting"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_print_orders_resumen_cost_mtto" model="ir.actions.report">
+        <field name="name">Orders Resumen Coste Maintenance</field>
+        <field name="model">maintenance.orders</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">df_maintenance.report_print_orders_resumen_cost_mtto</field>
+        <field name="report_file">df_maintenance.report_print_orders_resumen_cost_mtto</field>
+        <field name="paperformat_id" ref="df_maintenance.paperformat_enoting"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_print_maintenance_time" model="ir.actions.report">
+        <field name="name">Print Maintenance time</field>
+        <field name="model">maintenance.orders</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">df_maintenance.report_print_maintenance_time</field>
+        <field name="report_file">df_maintenance.report_print_maintenance_time</field>
+        <field name="paperformat_id" ref="df_maintenance.paperformat_enoting"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_print_maintenance_time_brigade" model="ir.actions.report">
+        <field name="name">Print Maintenance time brigade</field>
+        <field name="model">maintenance.orders</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">df_maintenance.report_print_maintenance_time_brigade</field>
+        <field name="report_file">df_maintenance.report_print_maintenance_time_brigade</field>
+        <field name="paperformat_id" ref="df_maintenance.paperformat_enoting"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

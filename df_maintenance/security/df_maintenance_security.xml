@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+        <record model="ir.module.category" id="module_category_maintenance">
+            <field name="name">Mantenimiento</field>
+            <field name="description">It helps you to select the role you want to maintain users and you can have the privileges associated with each.</field>
+            <field name="sequence">10</field>
+        </record>
+
+
+        <!--Supervisor-->
+        <record id="group_maintenance_supervisor" model="res.groups">
+            <field name="name">Maintenance Supervisor</field>
+<!--            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>-->
+            <field name="category_id" ref="module_category_maintenance"/>
+            <!--<field name="users" eval="[(4, ref('base.user_root'))]"/>-->
+        </record>
+
+        <!--Administrador-->
+        <record id="group_maintenance_administrator" model="res.groups">
+            <field name="name">Maintenance Administrator</field>
+<!--            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>-->
+            <field name="category_id" ref="module_category_maintenance"/>
+        </record>
+
+        <!--Planificador-->
+        <record id="group_maintenance_executor" model="res.groups">
+            <field name="name">Maintenance Executorr</field>
+<!--            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>-->
+            <field name="category_id" ref="module_category_maintenance"/>
+<!--            <field name="users" eval="[(4, ref('base.user_root'))]"/>-->
+        </record>
+
+        <!--Solicitante-->
+        <record id="group_maintenance_petitioner" model="res.groups">
+            <field name="name">Maintenance Petitioner</field>
+<!--            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>-->
+            <field name="category_id" ref="module_category_maintenance"/>
+<!--            <field name="users" eval="[(4, ref('base.user_root'))]"/>-->
+        </record>
+
+        <!--Programador-->
+        <record id="group_maintenance_programmer" model="res.groups">
+            <field name="name">Maintenance Programmer</field>
+<!--            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>-->
+            <field name="category_id" ref="module_category_maintenance"/>
+<!--            <field name="users" eval="[(4, ref('base.user_root'))]"/>-->
+        </record>
+
+
+<!--        <record model="ir.rule" id="maintenance_request_rule_id">-->
+<!--            <field name="name">maintenance request rule</field>-->
+<!--            <field name="model_id" ref="model_maintenance_request"/>-->
+<!--            <field name="groups" eval="[(4, ref('base.group_user'))]"/>-->
+<!--            <field eval="False" name="perm_unlink"/>-->
+<!--            <field eval="False" name="perm_write"/>-->
+<!--            <field name="domain_force">[ ('stage_id', 'in', [1,2,3,4])]</field>-->
+<!--        </record>-->
+    </data>
+</odoo>
+

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+        <template id="weblea_rns_layout">
+
+
+
+
+
+                <t t-call="web.html_container">
+
+                    <div class="header">
+
+                        <div style="font-size:20px;margin-top:70px;">
+                            <strong>Moa Nickel S.A. PROD</strong>
+                        </div>
+                        <div style="margin-top:10px;">
+                            <strong style="font-size:15px;">Código Entidad: 104.0</strong>
+                            <strong style="margin-left:180px;font-size:20px;">Vale</strong>
+                        </div>
+
+                        <div style="margin-top:20px;">
+                            <div style="font-size: 14px;">
+                                <strong> Orden servicio: </strong>
+                                <span t-field="order.order_no"/>
+                                <strong style="margin-left:200px;">
+                                    Page: <span class="page"/> / <span class="topage"/>
+                                </strong>
+                            </div>
+                            <div style="font-size: 14px;">
+                                <strong>Cliente: </strong>
+                                    <span t-field="order.asset_id.stock_asset_id.analytic_account.code"/>
+                                    <span t-field="order.asset_id.stock_asset_id.analytic_account.name"/>
+                                <strong style="margin-left:240px;">Creado por: </strong>
+
+                <!--                                        <span t-field="estudent.promedio"/>-->
+                            </div>
+                            <div style="font-size: 14px;">
+                                <strong>Proyecto: </strong>
+                            <!--             <span t-field="estudent.promedio"/>-->
+                                <strong style="margin-left:500px;">Impresc: </strong>
+                <!--                                        <span t-field="estudent.promedio"/>-->
+                            </div>
+                            <div style="font-size: 14px;">
+
+
+                                <strong>Almacén: </strong>
+                                <span t-esc="stock_req_order.warehouse_id.name"/>
+                            </div>
+                            <div style="font-size: 14px;">
+
+
+                                <strong>Recogido Por: </strong>
+                                <span t-esc="stock_req_order.employee_id.name"/>
+                                <span t-esc="stock_req_order.employee_id.code"/>
+                            </div>
+                             <div style="font-size: 14px;">
+
+
+                                <strong>Solicitud de Existencia </strong>
+                                <span t-esc="stock_req_order.name"/>
+                            </div>
+                        </div>
+                    <br/>
+                    </div >
+                    <br/>
+                    <br/>
+                    <br/>
+                    <div style="margin-top:10px" class="article">
+                    <br/>
+                        <br/>
+                        <br/>
+                            <table class="table"  style="font-size: 14px;margin-top: 10px;">
+                                <t t-set="total" t-value="0"/>
+                                <thead>
+                                    <tr>
+                                        <th>Artículos</th>
+                                        <th>Descripción</th>
+                                        <th>Cantidad</th>
+                                        <th>Ud</th>
+                                        <th>Precio</th>
+                                        <th>Total</th>
+                                        <th>Reservado Almacén</th>
+                                        <th>Ubicación</th>
+
+                                    </tr>
+                                </thead>
+                                <t t-set="total" t-value="0"/>
+                                <t t-foreach="stock_req_order.picking_ids" t-as="picking">
+                                    <t t-foreach="picking.move_line_ids_without_package" t-as="line">
+                                        <tbody>
+                                                <td>
+                                                    <span t-field="line.product_id.default_code"/>
+                                                </td>
+                                                <td>
+                                                    <span t-field="line.product_id.name"/>
+                                                </td>
+                                                <td>
+                                                    <span t-field="line.product_uom_qty"/>
+                                                </td>
+                                                <td>
+                                                    <span t-field="line.product_id.uom_id.name"/>
+                                                </td>
+                                                <td>
+                                                    <span t-field="line.product_id.standard_price"/>
+                                                </td>
+                                                <td>
+                                                    <t t-set="total" t-value="line.total_price+total" />
+                                                    <span t-esc="line.total_price"/>
+
+                                                </td>
+
+                                                <td>
+                                                    <t t-foreach="stock_req_order.stock_request_ids" t-as="request">
+                                                        <t t-if="request.product_id == line.product_id">
+                                                            <span t-field="request.work_order_product_id.product_qty"/>
+                                                        </t>
+                                                    </t>
+                                                </td>
+                                            <td>
+                                                <span t-esc="line.location_id.name"/>
+                                            </td>
+                                         </tbody>
+                                    </t>
+                                </t>
+
+                            </table>
+                            <div style="margin-left:400px;margin-top:15px">
+                                <strong > Total Prec: </strong>
+                                <span t-esc="total"/>
+                             </div>
+
+
+                    </div>
+
+                    <div class="footer">
+
+                            <table class="table table-bordered" style="table-layout: fixed;" border="0" >
+                                <thead style="display: table-row-group;">
+                                    <tr>
+                                        <th class="text-center" style="width: 33%" scope="col">Entregado por (Nombre y chapa):    </th>
+                                        <th class="text-center" style="width: 33%" scope="col">Recibido por (Nombre y chapa):     </th>
+                                        <th class="text-center" style="width: 33%" scope="col">Posteado por (Nombre y chapa):     </th>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-center" style="width: 33%" scope="col">_____________________________________</th>
+                                        <th class="text-center" style="width: 33%" scope="col">_____________________________________</th>
+                                        <th class="text-center" style="width: 33%" scope="col">_____________________________________</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-center" style="width: 33%" scope="col">Firma:_____________Fecha:_________</th>
+                                        <th class="text-center" style="width: 33%" scope="col">Firma:_____________Fecha:_________</th>
+                                        <th class="text-center" style="width: 33%" scope="col">Firma:_____________Fecha:_________</th>
+                                    </tr>
+                                </thead>
+                            </table>
+
+                    </div>
+
+                </t>
+
+
+
+        </template>
+
+        <template id="report_print_receipt_document">
+            <t t-foreach="stock_req_ids" t-as="stock_req_order">
+                <t t-call="df_maintenance.weblea_rns_layout">
+
+                    <t t-call="df_maintenance.weblea_rns_layout">
+
+
+
+
+
+
+                    </t>
+
+                 </t>
+
+             </t>
+
+         </template>
+
+
+<!--        <template id="report_print_receipt">-->
+<!--        <t t-call="web.html_container">-->
+<!--            <t t-foreach="docs" t-as="o">-->
+<!--                <t t-set="lang" t-value="o.partner_id.lang or o.company_id.partner_id.lang"/>-->
+<!--                <t t-call="df_maintenance.report_print_receipt_document" t-lang="lang"/>-->
+<!--            </t>-->
+<!--        </t>-->
+<!--    </template>-->
+</odoo>

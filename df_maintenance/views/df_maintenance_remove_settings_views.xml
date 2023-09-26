@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_df_maintenance_delete_settings_tree" model="ir.ui.view">
+            <field name="name">df.maintenance.remove.settings.tree</field>
+            <field name="model">df.maintenance.remove.settings</field>
+            <field eval="100" name="priority"/>
+            <field name="arch" type="xml">
+<!--                <tree string="Maintenance Remove Settings" >-->
+                    <tree editable="bottom">
+                            <field name="days_to_remove_order"/>
+                            <field name="free_state_materials_remove"/>
+                    </tree>
+<!--                    <field name="days_to_remove_order" />-->
+<!--                    <field name="free_state_materials_remove"  />-->
+<!--                </tree>-->
+            </field>
+        </record>
+        <record id="df_maintenance_remove_settings_form_view" model="ir.ui.view">
+            <field name="name">df.maintenance.remove.settings.form</field>
+            <field name="model">df.maintenance.remove.settings</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Maintenance Remove Settings">
+                    <sheet>
+                       <group>
+                            <group>
+                                <field name="days_to_remove_order" />
+                            </group>
+                            <group>
+                                <field name="free_state_materials_remove" />
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="df_action_maintenance_remove_settings" model="ir.actions.act_window">
+            <field name="name">Maintenance Remove Settings</field>
+            <field name="res_model">df.maintenance.remove.settings</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_df_maintenance_delete_settings_tree"/>
+        </record>
+    </data>
+</odoo>

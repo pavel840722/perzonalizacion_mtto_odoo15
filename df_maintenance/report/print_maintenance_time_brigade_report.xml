@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+        <!--TMB : Tiempo de mantenimiento x brigada-->
+
+        <template id="TMB_seccion_tabla_entidad">
+            <t>
+                <p class="text-right">
+                    Período: <t t-esc="date_start" t-options="{'widget':'date','format':'dd/MM/yyyy'}"/>
+                    al <t t-esc="date_end" t-options="{'widget':'date','format':'dd/MM/yyyy'}"/>
+                </p>
+
+                <br/>
+            </t>
+        </template>
+
+        <template id="TMB_seccion_encabezado_de_columnas">
+            <t>
+                <thead t-att-style="bg_main">
+                    <td width="10%" t-att-style="std_header_center">No.Orden</td>
+                    <td width="25%" t-att-style="std_header_center">Cargo</td>
+                    <td width="15%" t-att-style="std_header_center">No.chapilla</td>
+                     <td width="15%" t-att-style="std_header_center">Nombre</td>
+                    <td width="10%" t-att-style="std_header_center">Tiempo trabajado</td>
+                    <td width="15%" t-att-style="std_header_center">Importe</td>
+                </thead>
+            </t>
+
+        </template>
+
+        <template id="TMB_seccion_header_team_detallado">
+            <tr >
+            </tr>
+            <tr >
+              <td t-att-colspan="2" t-att-style="font_group_left">Area de mantenimiento: <t t-esc="current_record.name"/></td>
+            </tr>
+
+        </template>
+
+        <template id="TMB_seccion_header_brigada">
+
+                  <tr>
+                    <td t-att-colspan="2" t-att-style="font_group_left">Brigada: <t t-esc="b.hr_department.name"/> </td>
+                  </tr>
+
+        </template>
+
+        <template id="TMB_seccion_header_actividad">
+
+            <tr>
+                <td t-att-colspan="2" t-att-style="font_group_left">Actividad: <t t-esc="ac.name"/></td>
+            </tr>
+
+        </template>
+
+        <template id="TMB_seccion_footer_detallado">
+
+                <tr>  <td t-att-colspan="4" t-att-style="style_total">Total General</td>
+                      <td t-att-style="style_total"><t t-esc="total_total_tiempo" t-options='{"widget": "float_time"}'/></td>
+                      <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(total_total_importe,zeros_right,show_zeros,2)"/></td>
+            </tr>
+
+            </template>
+
+        <template id="TMB_seccion_footer_area_detallado">
+                <tr>
+                  <td t-att-colspan="4" t-att-style="style_total">Total Area de mantenimiento</td>
+                  <td t-att-style="style_total"><t t-esc="total_team_tiempo" t-options='{"widget": "float_time"}' /> </td>
+                  <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(total_team_importe,zeros_right,show_zeros,2)"/></td>
+
+                </tr>
+            </template>
+
+        <template id="TMB_seccion_footer_brigada_detallado">
+
+                <tr>
+                      <td t-att-colspan="4" t-att-style="style_total">Total Brigada</td>
+                      <td t-att-style="style_total"> <t t-esc="total_brigada_tiempo" t-options='{"widget": "float_time"}'/> </td>
+                      <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(total_brigada_importe,zeros_right,show_zeros,2)"/></td>
+                </tr>
+
+            </template>
+
+         <template id="TMB_seccion_footer_actividad_detallado">
+                <tr>
+                      <td t-att-colspan="4" t-att-style="style_total">Total Actividad</td>
+                      <td t-att-style="style_total"><t t-esc="total_actividad_tiempo" t-options='{"widget": "float_time"}' /></td>
+                      <td t-att-style="style_total"><t t-esc="user_func.number_by_cfg(total_actividad_importe,zeros_right,show_zeros,2)"/></td>
+                </tr>
+
+            </template>
+
+        <template id="TMB_totales_detallado">
+           <tr>
+              <td colspan="4" t-att-style="table_border_no + 'height:10px;'"/>
+           </tr>
+           <t>
+
+               <tr t-att-style="bg_deta">
+                   <td t-att-colspan="4" t-att-style="style_total">Total general </td>
+                   <td t-att-style="style_total"> <t t-esc="total_total_tiempo" t-options='{"widget": "float_time"}'/> </td>
+                   <td t-att-style="style_total"> <t t-esc="user_func.number_by_cfg(total_total_importe,zeros_right,show_zeros,2)"/></td>
+              </tr>
+
+
+          </t>
+
+        </template>
+
+        <template id="report_print_maintenance_time_brigade">
+             <t t-call="web.basic_layout">
+            <!-- CUSTOM STYLE -->
+            <style>
+                    table.keep_with_colum> td {
+                        overflow: hidden;
+                        overflow-wrap:break-word;
+                    }
+           </style>
+
+           <t t-set="current_name_report" t-value="'df_maintenance.do_report_print_maintenance_time_brigade'" />
+           <t t-call="nl_cfg_reports.load_configuracion_and_call_report" />
+            </t>
+       </template>
+
+        <template id="resumen_cost_detallado">
+            <table style="width:100%;border-spacing:0;cellspacing=0;">
+                <t t-set="total_total_tiempo" t-value="0"/>
+                <t t-set="total_total_importe" t-value="0"/>
+
+                <t t-foreach="get_team(domain_base)" t-as="current_record">
+                  <t t-set="name_team" t-value="current_record.name"/>
+                  <t t-call="df_maintenance.TMB_seccion_header_team_detallado"/>
+                  <t t-set="total_team_tiempo" t-value="0"/>
+                  <t t-set="total_team_importe" t-value="0"/>
+                  <t t-set="records_group" t-value="0"/>
+
+                    <t t-foreach="get_brigada(domain_base,current_record.id)" t-as="b">
+                         <t t-call="df_maintenance.TMB_seccion_header_brigada"/>
+                         <t t-set="total_brigada_tiempo" t-value="0"/>
+                         <t t-set="total_brigada_importe" t-value="0"/>
+                         <tbody>
+                              <t t-set="count_records" t-value="count_records + 1"/>
+                              <t t-set="records_group" t-value="records_group + 1"/>
+
+                              <t t-foreach="get_actividad(domain_base,current_record.id,b.id)" t-as="ac">
+
+                                    <t t-call="df_maintenance.TMB_seccion_header_actividad"/>
+                                    <t t-call="df_maintenance.TMB_seccion_encabezado_de_columnas"/>
+                                    <t t-set="total_actividad_tiempo" t-value="0.00"/>
+                                    <t t-set="total_actividad_importe" t-value="0.00"/>
+
+                                    <t t-foreach="get_employee(domain_base,current_record.id,b.id,ac.id)" t-as="item">
+                                          <tr>
+                                              <td width="10%" t-att-style="detail_center">  <t t-esc="item.order_id.order_no"/>  </td>
+                                              <td width="25%" t-att-style="detail_left">  <t t-esc="item.job_id.name"/>  </td>
+                                              <td width="15%" t-att-style="detail_center">  <t t-esc="item.employee_id.code"/>  </td>
+                                              <td width="15%" t-att-style="detail_left">  <t t-esc="item.employee_id.name"/>  </td>
+
+                                              <td width="10%" t-att-style="detail_right"><t t-esc="item.time" t-options='{"widget": "float_time"}'/> </td>
+                                              <td width="15%" t-att-style="detail_right"><t t-esc="user_func.number_by_cfg(item.amount,zeros_right,show_zeros,2)"/></td>
+                                         </tr>
+                                         <t t-set="total_total_tiempo" t-value="total_total_tiempo + item.time"/>
+                                         <t t-set="total_total_importe" t-value="total_total_importe + item.amount"/>
+                                         <t t-set="total_team_tiempo" t-value="total_team_tiempo + item.time"/>
+                                         <t t-set="total_team_importe" t-value="total_team_importe + item.amount"/>
+                                         <t t-set="total_brigada_tiempo" t-value="total_brigada_tiempo + item.time"/>
+                                         <t t-set="total_brigada_importe" t-value="total_brigada_importe + item.amount"/>
+                                         <t t-set="total_actividad_tiempo" t-value="total_actividad_tiempo + item.time"/>
+                                         <t t-set="total_actividad_importe" t-value="total_actividad_importe + item.amount"/>
+                                    </t>
+                                    <t t-call="df_maintenance.TMB_seccion_footer_actividad_detallado"/>
+                              </t>
+
+
+                         </tbody>
+                    </t>
+                    <t t-call="df_maintenance.TMB_seccion_footer_brigada_detallado"/>
+
+                </t>
+                <t t-call="df_maintenance.TMB_seccion_footer_area_detallado"/>
+                <t t-call="df_maintenance.TMB_totales_detallado"/>
+            </table>
+        </template>
+
+        <template id="do_report_print_maintenance_time_brigade">
+
+                <div class="page">
+                        <t t-set="total_records" t-value="len(docs)" />
+                        <t t-set="count_records" t-value="0"/>
+                        <t t-set="total_res_GM" t-value="0"/>
+                        <t t-set="total_res_MO" t-value="0"/>
+                        <t t-set="total_res_GT" t-value="0"/>
+                        <t t-set="total_res_TT" t-value="0"/>
+
+                        <t t-set="style_total" t-value="detail_right + font_group_right"/>
+                        <t t-set="style_total_center" t-value="detail_center + font_group_center"/>
+
+                        <t t-set="report_main_title" t-value="'Tiempo de Mantenimiento por brigadas'" />
+                        <div t-attf-class="#{'header' if repeat_header else 'o_boxed_header'}">
+                            <t t-call="nl_cfg_reports.custom_logo_and_title" />
+                        </div>
+                        <t t-call="df_maintenance.TMB_seccion_tabla_entidad" />
+                        <t t-call="df_maintenance.resumen_cost_detallado" />
+
+                       <t t-call="df_maintenance.cfg_cambio_pagina" />
+                </div>
+                 <div class="footer" t-att-style="std_footer">
+                      <t t-call="df_maintenance.pie_de_pagina" />
+                 </div>
+        </template>
+
+
+    </data>
+
+</odoo>

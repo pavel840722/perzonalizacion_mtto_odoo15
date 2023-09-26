@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+          <record id="stock_request_order_form_print_button" model="ir.ui.view">
+            <field name="name">stock.request.order.print_button</field>
+            <field name="model">stock.request.order</field>
+            <field name="inherit_id" ref="stock_request.stock_request_order_form"/>
+            <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_view_transfer']" position="before">
+               <button type="object"
+                       name="print_vale_work_order"
+                       class="oe_stat_button"
+                       icon="fa-print"
+                       string="Imprimir"
+                       attrs="{'invisible': [('state', '!=', 'open')]}"
+                       groups="">
+               </button>
+            </xpath>
+            </field>
+          </record>
+    </data>
+</odoo>
